@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "", // Changed from username
     password: "",
@@ -40,8 +41,13 @@ function Login() {
         if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
-          alert('Login successful!');
-          // Redirect to dashboard or home
+          
+          // Route the user to their respective dashboard
+          if (data.user.role === "admin") {
+            navigate("/admin/menu");
+          } else {
+            navigate("/"); // Placeholder for future Student Dashboard
+          }
         } else {
           alert(data.message);
         }
