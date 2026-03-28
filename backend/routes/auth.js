@@ -26,14 +26,21 @@ router.post('/register', async (req, res) => {
       email,
       password: hashedPassword,
       role,
+      urn,
+      crn,
+      degree,
+      department,
+      batch,
+      year,
+      hostel,
+      messAccount
     });
 
     await user.save();
 
-    // Note: Additional fields like urn, crn, etc., are not in the user model. You may need to update the model or handle them separately.
-
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
+    console.error('Registration Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -65,6 +72,7 @@ router.post('/login', async (req, res) => {
 
     res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (error) {
+    console.error('Login Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

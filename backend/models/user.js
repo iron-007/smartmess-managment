@@ -8,7 +8,15 @@ const userSchema = new mongoose.Schema({
     type: String, 
     enum: ['student', 'admin'], 
     default: 'student' 
-  }
+  },
+  urn: { type: String },
+  crn: { type: String },
+  degree: { type: String },
+  department: { type: String },
+  batch: { type: String },
+  year: { type: String },
+  hostel: { type: String },
+  messAccount: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
