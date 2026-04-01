@@ -11,4 +11,7 @@ router.put('/menu', protect, isAdmin, adminController.updateMenu);
 router.get('/pricing', protect, isAdmin, adminController.getPricing);
 router.put('/pricing', protect, isAdmin, adminController.updatePricing);
 
+// Student Management Endpoints
+router.get('/students', protect, isAdmin, adminController.getAllStudents);
+
 module.exports = router;

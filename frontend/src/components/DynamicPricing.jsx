@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 
 const DynamicPricing = () => {
   const [pricing, setPricing] = useState({
-    baseFee: 1200,
     student: { breakfast: 30, lunch: 50, dinner: 50, special: 80 },
     guest: { breakfast: 50, lunch: 80, dinner: 80, special: 120 },
-    rules: { noticeHours: 24, maxLeaveDays: 10 }
+    rules: { noticeHours: 24 }
   });
 
   // Mock audit log for demonstration
@@ -43,10 +42,6 @@ const DynamicPricing = () => {
     });
   };
   
-  const handleBaseChange = (field, value) => {
-    setPricing({ ...pricing, [field]: value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -121,20 +116,9 @@ const DynamicPricing = () => {
                 </div>
 
                 <div className="row g-3 mt-2">
-                  <div className="col-md-4">
-                    <label className="form-label fw-semibold">Fixed Monthly Base Fee</label>
-                    <div className="input-group">
-                      <span className="input-group-text bg-light">₹</span>
-                      <input type="number" className="form-control" value={pricing.baseFee} onChange={(e) => handleBaseChange('baseFee', e.target.value)} min="0" required />
-                    </div>
-                  </div>
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                      <label className="form-label fw-semibold">Min. Rebate Notice (Hrs)</label>
-                     <input type="number" className="form-control" value={pricing.rules.noticeHours} onChange={(e) => handleNestedChange('rules', 'noticeHours', e.target.value)} min="0" required />
-                  </div>
-                  <div className="col-md-4">
-                     <label className="form-label fw-semibold">Max Continuous Leave (Days)</label>
-                     <input type="number" className="form-control" value={pricing.rules.maxLeaveDays} onChange={(e) => handleNestedChange('rules', 'maxLeaveDays', e.target.value)} min="0" required />
+                     <input type="number" className="form-control" value={pricing.rules?.noticeHours || ''} onChange={(e) => handleNestedChange('rules', 'noticeHours', e.target.value)} min="0" required />
                   </div>
                 </div>
 
@@ -177,12 +161,11 @@ const DynamicPricing = () => {
           <div className="card shadow-sm border-0 rounded-4 bg-light">
              <div className="card-body p-4 text-muted">
                 <h5 className="fw-semibold text-dark mb-3">How Dynamic Pricing Works</h5>
-                <p>The values set here define the complex billing structure for the mess.</p>
+                <p>The values set here define the billing structure for the mess.</p>
                 <ul className="mb-0">
-                    <li className="mb-2"><strong>Base Fee:</strong> Charged universally to cover mess staff and maintenance.</li>
-                    <li className="mb-2">When a student applies for a <strong>leave/pause</strong>, the Per-Meal amounts are deducted from their bill.</li>
-                    <li className="mb-2">Students must provide notice <strong>{pricing.rules.noticeHours} hours</strong> in advance to be eligible for rebates.</li>
-                    <li className="mb-2">Rebates are calculated automatically based on these active prices.</li>
+                    <li className="mb-2">Students are billed based on the active <strong>Per-Meal Costs</strong> for the meals they consume.</li>
+                    <li className="mb-2">Students can take leave for any number of days to pause their meal charges.</li>
+                    <li className="mb-2">Students must provide notice <strong>{pricing.rules?.noticeHours || 24} hours</strong> in advance to successfully cancel a meal and not be charged.</li>
                     <li>Updating these prices will only affect <strong>future calculations</strong> and will not alter past generated bills.</li>
                 </ul>
              </div>

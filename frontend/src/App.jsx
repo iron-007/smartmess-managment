@@ -8,6 +8,7 @@ import AdminLayout from "./components/AdminLayout";
 import MenuManager from "./components/MenuManager";
 import DynamicPricing from "./components/DynamicPricing";
 import NoticeBoard from "./components/NoticeBoard";
+import StudentDirectory from "./components/StudentDirectory"; 
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
             <Route path="approvals" element={<h2 className="text-muted p-4">Account Approvals (Coming Soon)</h2>} />
             <Route path="notices" element={<NoticeBoard />} />
             <Route path="helpdesk" element={<h2 className="text-muted p-4">Admin Helpdesk (Coming Soon)</h2>} />
-            <Route path="students" element={<h2 className="text-muted p-4">Student Directory (Coming Soon)</h2>} />
+            <Route path="students" element={<StudentDirectory />} />
           </Route>
         </Route>
       </Routes>

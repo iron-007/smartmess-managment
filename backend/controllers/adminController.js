@@ -1,5 +1,6 @@
 const Menu = require('../models/Menu');
 const Pricing = require('../models/Pricing');
+const User = require('../models/user');
 
 // --- Menu Controllers ---
 exports.getMenu = async (req, res) => {
@@ -93,5 +94,17 @@ exports.updatePricing = async (req, res) => {
   } catch (error) {
     console.error('Error updating pricing:', error);
     res.status(500).json({ message: 'Server error updating pricing' });
+  }
+};
+
+// --- Student Management ---
+exports.getAllStudents = async (req, res) => {
+  try {
+    // Find all users with the role 'student' and exclude their password, sort by name
+    const students = await User.find({ role: 'student' }).select('-password').sort({ name: 1 });
+    res.status(200).json(students);
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    res.status(500).json({ message: 'Server error fetching students' });
   }
 };

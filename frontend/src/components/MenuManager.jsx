@@ -25,6 +25,12 @@ const initialTimings = {
 // Mock ratings for UI demonstration
 const mockRatings = { breakfast: 4.2, lunch: 4.5, dinner: 4.0 };
 
+const MEALS = [
+  { key: "breakfast", display: "Breakfast" },
+  { key: "lunch", display: "Lunch" },
+  { key: "dinner", display: "Dinner" },
+];
+
 const MenuManager = () => {
   const [menu, setMenu] = useState(initialMenu);
   const [timings, setTimings] = useState(initialTimings);
@@ -69,16 +75,6 @@ const MenuManager = () => {
     });
   };
 
-  const handleCopyPreviousWeek = () => {
-    // Simulated copy action
-    const copiedMenu = { ...initialMenu };
-    copiedMenu.Monday.breakfast.item = "Aloo Paratha";
-    copiedMenu.Monday.lunch.item = "Rajma Chawal";
-    copiedMenu.Monday.dinner.item = "Paneer Butter Masala";
-    setMenu(copiedMenu);
-    alert("Previous week's menu imported successfully!");
-  };
-
   const saveMenu = async (newStatus) => {
     setStatus(newStatus);
     setIsLoading(true);
@@ -113,8 +109,6 @@ const MenuManager = () => {
     }
   };
 
-  const days = Object.keys(menu);
-
   return (
     <div className="container-fluid">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -123,9 +117,6 @@ const MenuManager = () => {
           <span className={`badge ${status === 'Published' ? 'bg-success' : 'bg-warning text-dark'} fs-6`}>
             Status: {status}
           </span>
-          <button type="button" className="btn btn-outline-secondary fw-semibold" onClick={handleCopyPreviousWeek}>
-            <i className="bi bi-copy me-2"></i>Copy Previous Week
-          </button>
         </div>
       </div>
 
@@ -134,13 +125,13 @@ const MenuManager = () => {
         <div className="card-body p-4">
           <h5 className="fw-semibold mb-3">Meal Timings</h5>
           <div className="row g-3">
-            {["breakfast", "lunch", "dinner"].map((meal) => (
-              <div className="col-md-4" key={meal}>
-                <label className="form-label fw-semibold text-capitalize text-muted small">{meal} Window</label>
+            {MEALS.map((meal) => (
+              <div className="col-md-4" key={meal.key}>
+                <label className="form-label fw-semibold text-capitalize text-muted small">{meal.display} Window</label>
                 <div className="input-group">
-                  <input type="time" className="form-control" value={timings[meal].start} onChange={(e) => handleTimingChange(meal, 'start', e.target.value)} />
+                  <input type="time" className="form-control" value={timings[meal.key].start} onChange={(e) => handleTimingChange(meal.key, 'start', e.target.value)} />
                   <span className="input-group-text">to</span>
-                  <input type="time" className="form-control" value={timings[meal].end} onChange={(e) => handleTimingChange(meal, 'end', e.target.value)} />
+                  <input type="time" className="form-control" value={timings[meal.key].end} onChange={(e) => handleTimingChange(meal.key, 'end', e.target.value)} />
                 </div>
               </div>
             ))}
@@ -156,33 +147,33 @@ const MenuManager = () => {
                 <thead className="table-dark">
                   <tr>
                     <th style={{ width: "15%" }}>Day</th>
-                    {["Breakfast", "Lunch", "Dinner"].map(meal => (
-                       <th key={meal}>
-                         {meal} <span className="badge bg-secondary ms-1 fw-normal" title="Average student rating">⭐ {mockRatings[meal.toLowerCase()]}</span>
+                    {MEALS.map(meal => (
+                       <th key={meal.key}>
+                         {meal.display} <span className="badge bg-secondary ms-1 fw-normal" title="Average student rating">⭐ {mockRatings[meal.key]}</span>
                        </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {days.map((day) => (
+                  {Object.keys(menu).map((day) => (
                     <tr key={day}>
                       <td className="fw-semibold bg-light">{day}</td>
-                      {["breakfast", "lunch", "dinner"].map((meal) => (
-                        <td key={`${day}-${meal}`}>
+                      {MEALS.map((meal) => (
+                        <td key={`${day}-${meal.key}`}>
                           <div className="d-flex flex-column gap-2">
                             <input
                               type="text"
                               className="form-control"
-                              placeholder={`Main ${meal} item...`}
-                              value={menu[day][meal].item}
-                              onChange={(e) => handleMenuChange(day, meal, 'item', e.target.value)}
+                              placeholder={`Main ${meal.key} item...`}
+                              value={menu[day][meal.key].item}
+                              onChange={(e) => handleMenuChange(day, meal.key, 'item', e.target.value)}
                             />
                             <input
                               type="text"
                               className="form-control form-control-sm text-muted"
                               placeholder="Optional extra (e.g. Paneer ₹20)"
-                              value={menu[day][meal].extra}
-                              onChange={(e) => handleMenuChange(day, meal, 'extra', e.target.value)}
+                              value={menu[day][meal.key].extra}
+                              onChange={(e) => handleMenuChange(day, meal.key, 'extra', e.target.value)}
                             />
                           </div>
                         </td>

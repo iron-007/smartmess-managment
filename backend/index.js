@@ -8,6 +8,7 @@ const path = require('path');
 const connectDB = require('./config/db');
 const adminRoutes = require('./routes/adminRoutes');
 const noticeRoutes = require('./routes/noticeRoutes');
+const studentRoutes = require('./routes/studentRoutes');
 
 // Connect to database
 connectDB();
@@ -25,6 +26,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/notices', noticeRoutes);
+app.use('/api/students', studentRoutes);
 
 // Basic route to test the server
 app.get('/', (req, res) => {

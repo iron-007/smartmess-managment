@@ -9,18 +9,9 @@ const userSchema = new mongoose.Schema({
     enum: ['student', 'admin'], 
     default: 'student' 
   },
-  position: {
-    type: String,
-    enum: ['manager', 'butler']
-  },
-  urn: { type: String },
-  crn: { type: String },
-  degree: { type: String },
-  department: { type: String },
-  batch: { type: String },
   year: { type: String },
   hostel: { type: String },
-  messAccount: { type: String }
+  messAccount: { type: String, unique: true, sparse: true } // Unique for students, but not required for admins
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

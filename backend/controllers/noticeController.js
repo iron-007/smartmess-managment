@@ -2,6 +2,9 @@ const Notice = require('../models/Notice');
 const fs = require('fs');
 const path = require('path');
 
+// Define constants for magic numbers
+const EDIT_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
+
 // GET /api/admin/notices
 exports.getNotices = async (req, res) => {
   try {
@@ -21,8 +24,8 @@ exports.createNotice = async (req, res) => {
     let attachmentUrl = null;
 
     if (req.file) {
-      // Save the relative URL so the frontend can access it
-      attachmentUrl = `/uploads/notices/${req.file.filename}`;
+      // Store path relative to the project structure, without a leading slash
+      attachmentUrl = `uploads/notices/${req.file.filename}`;
     }
 
     const newNotice = new Notice({ title, content, priority, date, attachmentUrl, validUntil: validUntil || null });
@@ -43,13 +46,65 @@ exports.deleteNotice = async (req, res) => {
 
     // Clean up the attached file from the server
     if (notice.attachmentUrl) {
-      const filePath = path.join(__dirname, '..', notice.attachmentUrl);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      // Assuming 'uploads' directory is a sibling of 'controllers'
+      const filePath = path.join(__dirname, '..', notice.attachmentUrl); 
+      try {
+        // Use async unlink and check for existence beforehand to avoid errors
+        if (fs.existsSync(filePath)) {
+          await fs.promises.unlink(filePath);
+        }
+      } catch (fileError) {
+        // If the DB entry is deleted but the file isn't, we should log it
+        // but not fail the whole operation, as the primary resource is gone.
+        console.warn(`Failed to delete attachment file: ${filePath}`, fileError);
+      }
     }
 
     res.status(200).json({ message: "Notice deleted successfully." });
   } catch (error) {
     console.error("Error deleting notice:", error);
     res.status(500).json({ message: "Server error while deleting notice." });
+  }
+};
+
+// PUT /api/admin/notices/:id
+exports.updateNotice = async (req, res) => {
+  try {
+    const { title, content, priority, validUntil } = req.body;
+    const notice = await Notice.findById(req.params.id);
+    if (!notice) return res.status(404).json({ message: "Notice not found." });
+
+    // Enforce backend 5 minute edit window validation 
+    const now = new Date();
+    const createdAt = new Date(notice.createdAt);
+    if ((now - createdAt) > EDIT_WINDOW_MS) {
+      return res.status(403).json({ message: "Edit window (5 minutes) has expired." });
+    }
+
+    notice.title = title;
+    notice.content = content;
+    notice.priority = priority;
+    if (validUntil !== undefined) notice.validUntil = validUntil || null;
+
+    if (req.file) {
+      if (notice.attachmentUrl) {
+        const oldFilePath = path.join(__dirname, '..', notice.attachmentUrl); 
+        try {
+          if (fs.existsSync(oldFilePath)) {
+            await fs.promises.unlink(oldFilePath);
+          }
+        } catch (fileError) {
+          console.warn(`Failed to delete old attachment file: ${oldFilePath}`, fileError);
+        }
+      }
+      // Store path relative to the project structure, without a leading slash
+      notice.attachmentUrl = `uploads/notices/${req.file.filename}`;
+    }
+
+    await notice.save();
+    res.status(200).json({ notice });
+  } catch (error) {
+    console.error("Error updating notice:", error);
+    res.status(500).json({ message: "Server error while updating notice." });
   }
 };
