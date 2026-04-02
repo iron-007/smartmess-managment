@@ -11,7 +11,13 @@ const userSchema = new mongoose.Schema({
   },
   year: { type: String },
   hostel: { type: String },
-  messAccount: { type: String, unique: true, sparse: true } // Unique for students, but not required for admins
+  messAccount: { type: String, unique: true, sparse: true },
+  // --- New Fields for Directory & Modal ---
+  urn: { type: String },
+  crn: { type: String },
+  department: { type: String },
+  phone: { type: String },
+  previousDues: { type: Number, default: 0 } // Financial tracker
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
