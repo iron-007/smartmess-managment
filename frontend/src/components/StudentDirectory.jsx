@@ -11,7 +11,6 @@ const StudentDirectory = () => {
   const [error, setError] = useState(null);
   const [dayHeaders, setDayHeaders] = useState(Array.from({ length: 31 }, (_, i) => i + 1));
 
-  // Effect to fetch data from the backend
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -26,12 +25,10 @@ const StudentDirectory = () => {
         
         if (data.success) {
           setStudents(data.students);
-          
-          // POINT 1: Set the exact number of columns based on the backend calendar
+          // Uses the dynamic calendar days sent from our backend!
           if (data.daysInMonth) {
             setDayHeaders(Array.from({ length: data.daysInMonth }, (_, i) => i + 1));
           }
-          
         } else {
           throw new Error('Failed to fetch student data.');
         }
@@ -46,7 +43,6 @@ const StudentDirectory = () => {
     fetchStudents();
   }, []);
 
-  // Effect to handle filtering based on search query
   useEffect(() => {
     if (searchQuery.trim() === '') {
       setFilteredStudents(students);
@@ -62,129 +58,176 @@ const StudentDirectory = () => {
     setSelectedStudent(student);
     setIsModalOpen(true);
   };
+  
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedStudent(null);
   };
 
-  // --- Styles for Sticky Columns ---
+  // --- Premium Sticky Column Styles ---
+  // Matches the new dark sidebar theme
   const stickyHeaderStyle = {
     position: 'sticky',
-    zIndex: 2,
-    background: '#f8f9fa', // A light background to cover content during scroll
+    zIndex: 10,
+    backgroundColor: '#16181d', 
+    color: '#ffffff',
+    boxShadow: '1px 0 0 rgba(255,255,255,0.1)' // Replaces border to prevent overlap glitches
   };
 
   const stickyCellStyle = {
     position: 'sticky',
-    zIndex: 1,
-    background: '#ffffff', // Match row background
+    zIndex: 5,
+    backgroundColor: '#ffffff',
+    boxShadow: '1px 0 0 #eef0f4' 
   };
 
   const totalColumns = dayHeaders.length + 7;
 
   return (
-    <div className="container-fluid">
-      <h2 className="mb-3 fw-bold text-primary">Student Attendance & Billing Grid</h2>
-      <p className="text-muted">A complete bird's-eye view of student attendance and finances for the current month.</p>
+    <div className="container-fluid py-2">
+      
+      {/* PAGE HEADER */}
+      <div className="mb-4">
+        <h2 className="nav-title fw-bold m-0">
+          <i className="bi bi-people-fill me-2"></i>Student Directory & Billing
+        </h2>
+        <p className="text-muted small mt-1 mb-0">A complete bird's-eye view of student attendance and finances.</p>
+      </div>
 
-      <div className="row mb-4">
-        <div className="col-md-6 col-lg-4">
-          <div className="input-group">
-            <span className="input-group-text bg-white">
-              &#128269;
-            </span>
-            <input
-              type="number"
-              className="form-control form-control-lg"
-              placeholder="Search by Mess Account Number..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+      {/* MODERN SEARCH BAR */}
+      <div className="card shadow-sm border-0 rounded-4 mb-4 bg-white">
+        <div className="card-body p-3">
+          <div className="row">
+            <div className="col-md-6 col-lg-4">
+              <div className="input-group input-group-lg shadow-sm rounded-pill overflow-hidden border">
+                <span className="input-group-text bg-white border-0 text-muted ps-4">
+                  <i className="bi bi-search"></i>
+                </span>
+                <input
+                  type="number"
+                  className="form-control border-0 modern-input bg-white fs-6"
+                  placeholder="Search by Mess Account Number..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="table-responsive shadow-sm rounded-3">
-        <table className="table table-bordered table-hover align-middle mb-0" style={{ minWidth: '4000px' }}>
-          <thead className="table-light text-center text-muted">
-            <tr>
-              {/* Zone A: Sticky Student Info */}
-              <th className="p-3 fs-6" style={{ ...stickyHeaderStyle, left: 0, minWidth: '250px' }}>Student Name</th>
-              <th className="p-3 fs-6" style={{ ...stickyHeaderStyle, left: '250px', minWidth: '150px' }}>Account No.</th>
-              <th className="p-3 fs-6" style={{ ...stickyHeaderStyle, left: '400px', minWidth: '100px' }}>Year</th>
-              <th className="p-3 fs-6" style={{ ...stickyHeaderStyle, left: '500px', minWidth: '150px', borderRight: '2px solid #dee2e6' }}>Actions</th>
+      {/* THE DATA GRID CARD */}
+      <div className="card shadow-sm border-0 rounded-4 overflow-hidden mb-5">
+        
+        {/* Dark Header anchoring the Grid */}
+        <div className="bg-sidebar-dark p-3 px-4 d-flex justify-content-between align-items-center">
+           <h5 className="fw-bold m-0 text-white">
+             <i className="bi bi-grid-3x3-gap text-white-50 me-2"></i>Attendance Ledger
+           </h5>
+           <span className="badge bg-light text-dark rounded-pill shadow-sm px-3 py-2">
+             <i className="bi bi-person-lines-fill me-1"></i> {filteredStudents.length} Records
+           </span>
+        </div>
 
-              {/* Zone B: The 31-Day Attendance Tracker */}
-              {dayHeaders.map(day => (
-                <th key={day} className="p-3 fs-6" style={{ minWidth: '70px' }}>{day}</th>
-              ))}
+        <div className="card-body p-0 bg-white">
+          <div className="table-responsive">
+            <table className="table table-borderless table-hover align-middle mb-0" style={{ minWidth: '3500px' }}>
+              
+              {/* Table Header */}
+              <thead className="menu-table-header">
+                <tr>
+                  {/* Zone A: Sticky Student Info */}
+                  <th className="py-3 px-4 small text-uppercase" style={{ ...stickyHeaderStyle, left: 0, minWidth: '220px' }}>Student Name</th>
+                  <th className="py-3 px-3 small text-uppercase" style={{ ...stickyHeaderStyle, left: '220px', minWidth: '130px' }}>Account No.</th>
+                  <th className="py-3 px-3 small text-uppercase" style={{ ...stickyHeaderStyle, left: '350px', minWidth: '100px' }}>Year</th>
+                  <th className="py-3 px-3 small text-uppercase text-center" style={{ ...stickyHeaderStyle, left: '450px', minWidth: '140px', boxShadow: '2px 0 5px rgba(0,0,0,0.2)' }}>Actions</th>
 
-              {/* Zone C: The Financial Totals */}
-              <th className="p-3 fs-6" style={{ minWidth: '150px' }}>Current Bill</th>
-              <th className="p-3 fs-6" style={{ minWidth: '150px' }}>Previous Dues</th>
-              <th className="p-3 fs-6" style={{ minWidth: '150px' }}>Net Payable</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={totalColumns} className="text-center p-5">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  <p className="mt-2 text-muted">Loading student data...</p>
-                </td>
-              </tr>
-            ) : error ? (
-              <tr>
-                <td colSpan={totalColumns} className="text-center p-5 text-danger">
-                  <h5 className="fw-bold">Could not load data</h5>
-                  <p>{error}</p>
-                </td>
-              </tr>
-            ) : filteredStudents.length > 0 ? (
-              filteredStudents.map((student) => {
-                const netPayable = student.currentMonthBill + student.previousDues;
-                return (
-                  <tr key={student._id}>
-                    {/* Zone A: Sticky Student Info */}
-                    <td className="fw-bold p-3 fs-5" style={{ ...stickyCellStyle, left: 0 }}>{student.name}</td>
-                    <td className="p-3 fs-5" style={{ ...stickyCellStyle, left: '250px' }}>{student.messAccount}</td>
-                    <td className="p-3 fs-5" style={{ ...stickyCellStyle, left: '400px' }}>{student.year}</td>
-                    <td className="p-3" style={{ ...stickyCellStyle, left: '500px', borderRight: '2px solid #dee2e6' }}>
-                      <button className="btn btn-outline-primary w-100 fw-semibold" onClick={() => handleViewDetails(student)}>
-                        View Details
-                      </button>
+                  {/* Zone B: The Dynamic Attendance Tracker */}
+                  {dayHeaders.map(day => (
+                    <th key={day} className="py-3 text-center small text-uppercase" style={{ minWidth: '60px' }}>{day}</th>
+                  ))}
+
+                  {/* Zone C: The Financial Totals */}
+                  <th className="py-3 px-4 text-end small text-uppercase" style={{ minWidth: '150px' }}>Current Bill</th>
+                  <th className="py-3 px-4 text-end small text-uppercase" style={{ minWidth: '150px' }}>Previous Dues</th>
+                  <th className="py-3 px-4 text-end small text-uppercase" style={{ minWidth: '160px' }}>Net Payable</th>
+                </tr>
+              </thead>
+              
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan={totalColumns} className="text-center p-5">
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                      <p className="mt-3 fw-medium text-muted">Calculating financial ledgers...</p>
                     </td>
-
-                    {/* Zone B: The Day Attendance Tracker */}
-                    {student.monthlyStatus.map((isPresent, dayIndex) => (
-                      <td key={dayIndex} className="text-center align-middle p-3">
-                        <span className={`fs-2 lh-1 ${isPresent ? 'text-success' : 'text-danger'}`}>&#9679;</span>
-                      </td>
-                    ))}
-
-                    {/* Zone C: The Financial Totals */}
-                    <td className="text-end p-3 fs-5 align-middle">₹{student.currentMonthBill.toLocaleString()}</td>
-                    <td className={`text-end p-3 fs-5 align-middle fw-semibold ${student.previousDues > 0 ? 'text-danger' : ''}`}>
-                      ₹{student.previousDues.toLocaleString()}
-                    </td>
-                    <td className="text-end p-3 fs-5 align-middle fw-bold text-primary">₹{netPayable.toLocaleString()}</td>
                   </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan={totalColumns} className="text-center p-5 text-muted">
-                  {searchQuery
-                    ? 'No student found with this account number.'
-                    : 'No students in the directory.'
-                  }
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                ) : error ? (
+                  <tr>
+                    <td colSpan={totalColumns} className="text-center p-5 text-danger bg-danger bg-opacity-10">
+                      <i className="bi bi-exclamation-triangle-fill fs-1 d-block mb-2"></i>
+                      <h5 className="fw-bold">Could not load data</h5>
+                      <p className="mb-0">{error}</p>
+                    </td>
+                  </tr>
+                ) : filteredStudents.length > 0 ? (
+                  filteredStudents.map((student, index) => {
+                    const netPayable = student.currentMonthBill + student.previousDues;
+                    return (
+                      <tr key={student._id} className={index !== filteredStudents.length - 1 ? "border-bottom" : ""}>
+                        
+                        {/* Zone A: Sticky Student Info */}
+                        <td className="fw-bold text-dark py-3 px-4" style={{ ...stickyCellStyle, left: 0 }}>
+                          <div className="d-flex align-items-center">
+                            <div className="bg-light rounded-circle d-flex justify-content-center align-items-center me-3 border" style={{width: '35px', height: '35px'}}>
+                              <i className="bi bi-person text-secondary"></i>
+                            </div>
+                            {student.name}
+                          </div>
+                        </td>
+                        <td className="py-3 px-3 text-secondary fw-medium" style={{ ...stickyCellStyle, left: '220px' }}>{student.messAccount}</td>
+                        <td className="py-3 px-3 text-secondary" style={{ ...stickyCellStyle, left: '350px' }}>{student.year}</td>
+                        <td className="py-3 px-3 text-center" style={{ ...stickyCellStyle, left: '450px', boxShadow: '2px 0 8px rgba(0,0,0,0.05)' }}>
+                          <button className="btn btn-light text-primary btn-sm rounded-pill px-3 fw-bold border hover-shadow" onClick={() => handleViewDetails(student)}>
+                            <i className="bi bi-eye me-1"></i> Details
+                          </button>
+                        </td>
+
+                        {/* Zone B: The Day Attendance Tracker */}
+                        {student.monthlyStatus.map((isPresent, dayIndex) => (
+                          <td key={dayIndex} className="text-center align-middle py-3">
+                            <i className={`bi bi-circle-fill ${isPresent ? 'text-success' : 'text-danger opacity-50'} small`}></i>
+                          </td>
+                        ))}
+
+                        {/* Zone C: The Financial Totals */}
+                        <td className="text-end py-3 px-4 text-secondary fw-medium">
+                          ₹{student.currentMonthBill.toLocaleString()}
+                        </td>
+                        <td className={`text-end py-3 px-4 fw-semibold ${student.previousDues > 0 ? 'text-danger' : 'text-secondary'}`}>
+                          ₹{student.previousDues.toLocaleString()}
+                        </td>
+                        <td className="text-end py-3 px-4 bg-light fw-bold text-dark border-start">
+                          ₹{netPayable.toLocaleString()}
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan={totalColumns} className="text-center p-5 text-muted">
+                      <i className="bi bi-search fs-1 d-block mb-3 opacity-25"></i>
+                      <h5 className="fw-medium">No records found</h5>
+                      <p className="small mb-0">Try adjusting your mess account search criteria.</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {isModalOpen && selectedStudent && (
