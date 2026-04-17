@@ -54,10 +54,10 @@ const AdminLayout = () => {
             <span className="link-text">Notice Board</span>
           </Link>
 
-          <Link to="/admin/helpdesk" className={`sidebar-link ${isActive('/admin/helpdesk')}`}>
+          {/* <Link to="/admin/helpdesk" className={`sidebar-link ${isActive('/admin/helpdesk')}`}>
             <i className="bi bi-headset"></i>
             <span className="link-text">Helpdesk</span>
-          </Link>
+          </Link> */}
         </nav>
       </aside>
 
