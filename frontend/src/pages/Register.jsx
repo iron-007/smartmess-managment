@@ -124,7 +124,7 @@ function Register() {
             <form onSubmit={handleSubmit}>
               
               {/* Role Toggle Switch */}
-              <div className="mb-4 p-2 bg-light rounded-pill d-inline-flex border">
+              <div className="mb-4 p-2 bg-light rounded-pill d-flex flex-wrap gap-2 justify-content-center border" style={{ maxWidth: 'fit-content' }}>
                 <div className="form-check form-check-inline m-0 ps-0">
                   <input type="radio" className="btn-check" name="role" id="roleStudent" value="student" checked={form.role === "student"} onChange={handleChange} />
                   <label className="btn rounded-pill px-4 fw-bold" htmlFor="roleStudent" style={form.role === 'student' ? { background: '#16181d', color: 'white'} : { color: '#6c757d' }}>Student</label>
@@ -132,6 +132,10 @@ function Register() {
                 <div className="form-check form-check-inline m-0 ps-0">
                   <input type="radio" className="btn-check" name="role" id="roleAdmin" value="admin" checked={form.role === "admin"} onChange={handleChange} />
                   <label className="btn rounded-pill px-4 fw-bold" htmlFor="roleAdmin" style={form.role === 'admin' ? { background: '#16181d', color: 'white'} : { color: '#6c757d' }}>Admin</label>
+                </div>
+                <div className="form-check form-check-inline m-0 ps-0">
+                  <input type="radio" className="btn-check" name="role" id="roleButler" value="butler" checked={form.role === "butler"} onChange={handleChange} />
+                  <label className="btn rounded-pill px-4 fw-bold" htmlFor="roleButler" style={form.role === 'butler' ? { background: '#16181d', color: 'white'} : { color: '#6c757d' }}>Mess Butler</label>
                 </div>
               </div>
               

@@ -34,4 +34,4 @@ const menuSchema = new mongoose.Schema({
   status: { type: String, enum: ['Draft', 'Published'], default: 'Draft' }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Menu', menuSchema);
+module.exports = mongoose.models.Menu || mongoose.model('Menu', menuSchema);

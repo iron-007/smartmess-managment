@@ -155,62 +155,7 @@ const MenuManager = () => {
       <div className="card shadow-sm border-0 rounded-4 mb-5">
         <div className="card-body p-4">
           <form>
-            <div className="table-responsive">
-              <table className="table table-borderless align-middle mb-0">
-                
-                {/* Clean, Light Header instead of heavy dark one */}
-                <thead className="border-bottom border-2">
-                  <tr>
-                    <th style={{ width: "12%" }} className="text-muted fw-bold text-uppercase small pb-3">Day</th>
-                    {MEALS.map(meal => (
-                       <th key={meal.key} className="pb-3">
-                         <div className="d-flex align-items-center">
-                           <span className="fw-bold fs-6 text-dark">{meal.display}</span>
-                           <span className="badge bg-light text-warning ms-2 border rounded-pill shadow-sm" title="Average student rating">
-                             <i className="bi bi-star-fill me-1"></i>{mockRatings[meal.key]}
-                           </span>
-                         </div>
-                       </th>
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {Object.keys(menu).map((day) => (
-                    <tr key={day} className="border-bottom">
-                      <td className="fw-bold text-secondary fs-6 py-4">{day}</td>
-                      {MEALS.map((meal) => (
-                        <td key={`${day}-${meal.key}`} className="py-4 pe-4">
-                          <div className="d-flex flex-column gap-2">
-                            {/* Main Item Input */}
-                            <input
-                              type="text"
-                              className="form-control modern-input fw-medium"
-                              placeholder={`Main ${meal.key} item...`}
-                              value={menu[day][meal.key].item}
-                              onChange={(e) => handleMenuChange(day, meal.key, 'item', e.target.value)}
-                            />
-                            {/* Optional Extra Input */}
-                            <div className="input-group input-group-sm shadow-none">
-                              <span className="input-group-text bg-transparent border-0 ps-1 pe-2 text-muted">
-                                <i className="bi bi-plus-circle-dotted"></i>
-                              </span>
-                              <input
-                                type="text"
-                                className="form-control modern-input text-muted"
-                                placeholder="Optional extra (e.g. Paneer ₹20)"
-                                value={menu[day][meal.key].extra}
-                                onChange={(e) => handleMenuChange(day, meal.key, 'extra', e.target.value)}
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div><div className="table-responsive menu-table-wrapper shadow-sm">
+            <div className="table-responsive menu-table-wrapper shadow-sm">
               <table className="table table-borderless align-middle mb-0">
                 
                 {/* The New Dark Header Matching the Sidebar */}

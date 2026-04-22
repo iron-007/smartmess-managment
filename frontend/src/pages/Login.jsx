@@ -46,12 +46,15 @@ function Login() {
         setLoading(false);
         if (data.token) {
           localStorage.setItem('token', data.token);
+          localStorage.setItem('refreshToken', data.refreshToken);
           localStorage.setItem('user', JSON.stringify(data.user));
           setServerMessage({ type: "success", text: "Login successful! Redirecting..." });
 
           setTimeout(() => {
             if (data.user.role === "admin") {
               navigate("/admin/menu");
+            } else if (data.user.role === "butler") {
+              navigate("/butler/dashboard");
             } else {
               navigate("/student/dashboard");
             }
@@ -137,6 +140,7 @@ function Login() {
                   >
                     <option value="student">Student</option>
                     <option value="admin">Admin</option>
+                    <option value="butler">Mess Butler</option>
                   </select>
                 </div>
 

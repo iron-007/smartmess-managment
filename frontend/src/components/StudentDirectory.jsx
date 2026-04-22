@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import StudentDetailModal from './StudentDetailModal';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const StudentDirectory = () => {
   const [students, setStudents] = useState([]);
@@ -94,6 +96,48 @@ const StudentDirectory = () => {
     }
   };
 
+  const exportPDF = () => {
+    const doc = new jsPDF('landscape'); // Landscape for more columns
+    
+    // Header
+    doc.setFontSize(20);
+    doc.setTextColor(22, 24, 29); // #16181d
+    doc.text('SmartMess - Comprehensive Student Billing Report', 14, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
+    doc.text(`Total Records: ${filteredStudents.length}`, 14, 33);
+    
+    // Table
+    const tableColumn = ["Account #", "Student Name", "Year", "Dept.", "Extras", "Fine", "Curr. Bill", "Prev. Dues", "Net Payable"];
+    const tableRows = filteredStudents.map(student => [
+      student.messAccount,
+      student.name,
+      student.year,
+      student.department,
+      `Rs. ${student.totalExtras || 0}`,
+      `Rs. ${student.fineAmount || 0}`,
+      `Rs. ${student.currentMonthBill}`,
+      `Rs. ${student.previousDues}`,
+      `Rs. ${student.currentMonthBill + student.previousDues}`
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 40,
+      theme: 'striped',
+      headStyles: { fillColor: [22, 24, 29], textColor: 255 },
+      styles: { fontSize: 8 },
+      columnStyles: {
+        8: { fontStyle: 'bold' }
+      }
+    });
+
+    doc.save(`SmartMess_Directory_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
   // --- Premium Sticky Column Styles ---
   const stickyHeaderStyle = {
     position: 'sticky',
@@ -130,19 +174,28 @@ const StudentDirectory = () => {
           <p className="text-muted small mt-1 mb-0">A complete bird's-eye view of student attendance and finances.</p>
         </div>
         
-        {/* The Panel-Pleaser Button */}
-        <button 
-          onClick={handleRunLedger} 
-          disabled={isLedgerRunning || loading}
-          className="btn text-white fw-bold shadow-sm rounded-pill px-4 py-2"
-          style={{ background: 'linear-gradient(45deg, #FF512F 0%, #DD2476 100%)', border: 'none' }}
-        >
-          {isLedgerRunning ? (
-            <><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Auditing...</>
-          ) : (
-            <><i className="bi bi-lightning-charge-fill me-2"></i>Run Midnight Audit</>
-          )}
-        </button>
+        {/* Action Buttons */}
+        <div className="d-flex gap-2">
+          <button 
+            onClick={exportPDF}
+            className="btn btn-outline-dark fw-bold shadow-sm rounded-pill px-4 py-2"
+          >
+            <i className="bi bi-file-earmark-pdf me-2"></i>Export Directory PDF
+          </button>
+
+          <button 
+            onClick={handleRunLedger} 
+            disabled={isLedgerRunning || loading}
+            className="btn text-white fw-bold shadow-sm rounded-pill px-4 py-2"
+            style={{ background: 'linear-gradient(45deg, #FF512F 0%, #DD2476 100%)', border: 'none' }}
+          >
+            {isLedgerRunning ? (
+              <><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Auditing...</>
+            ) : (
+              <><i className="bi bi-lightning-charge-fill me-2"></i>Run Midnight Audit</>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* MODERN SEARCH BAR */}
@@ -181,7 +234,7 @@ const StudentDirectory = () => {
 
         <div className="card-body p-0 bg-white">
           <div className="table-responsive">
-            <table className="table table-borderless table-hover align-middle mb-0" style={{ minWidth: '3500px' }}>
+            <table className="table table-borderless table-hover align-middle mb-0">
               
               <thead className="menu-table-header">
                 <tr>
@@ -190,13 +243,11 @@ const StudentDirectory = () => {
                   <th className="py-3 px-3 small text-uppercase" style={{ ...stickyHeaderStyle, left: '350px', minWidth: '100px' }}>Year</th>
                   <th className="py-3 px-3 small text-uppercase text-center" style={{ ...stickyHeaderStyle, left: '450px', minWidth: '140px', boxShadow: '2px 0 5px rgba(0,0,0,0.2)' }}>Actions</th>
 
-                  {dayHeaders.map(day => (
-                    <th key={day} className="py-3 text-center small text-uppercase" style={{ ...standardHeaderStyle, minWidth: '60px' }}>{day}</th>
-                  ))}
-
-                  <th className="py-3 px-4 text-end small text-uppercase" style={{ ...standardHeaderStyle, minWidth: '150px' }}>Current Bill</th>
-                  <th className="py-3 px-4 text-end small text-uppercase" style={{ ...standardHeaderStyle, minWidth: '150px' }}>Previous Dues</th>
-                  <th className="py-3 px-4 text-end small text-uppercase" style={{ ...standardHeaderStyle, minWidth: '160px' }}>Net Payable</th>
+                  <th className="py-3 px-4 text-end small text-uppercase" style={{ ...standardHeaderStyle }}>Extras</th>
+                  <th className="py-3 px-4 text-end small text-uppercase" style={{ ...standardHeaderStyle }}>Fine</th>
+                  <th className="py-3 px-4 text-end small text-uppercase" style={{ ...standardHeaderStyle }}>Current Bill</th>
+                  <th className="py-3 px-4 text-end small text-uppercase" style={{ ...standardHeaderStyle }}>Previous Dues</th>
+                  <th className="py-3 px-4 text-end small text-uppercase" style={{ ...standardHeaderStyle }}>Net Payable</th>
                 </tr>
               </thead>
               
@@ -240,30 +291,12 @@ const StudentDirectory = () => {
                           </button>
                         </td>
 
-                        {/* Zone B: The Day Attendance Tracker */}
-                        {student.monthlyStatus.map((isPresent, dayIndex) => {
-                          const dayNumber = dayIndex + 1;
-                          const currentDay = new Date().getDate(); // Gets today's date (1-31)
-                          const isFuture = dayNumber > currentDay;
-
-                          return (
-                            <td key={dayIndex} className="text-center align-middle py-3">
-                              {isFuture ? (
-                                // Show ND (No Data) for future days
-                                <span className="text-muted fw-bold" style={{ fontSize: '0.65rem', opacity: 0.4 }} title="Future Date: No Data">
-                                  ND
-                                </span>
-                              ) : isPresent ? (
-                                // Show Green Dot for Past/Present days where account is Open
-                                <i className="bi bi-circle-fill text-success small" title="Account Open"></i>
-                              ) : (
-                                // Show Red Dot for Past/Present days where account is Closed (On Leave)
-                                <i className="bi bi-circle-fill text-danger small" title="Account Closed (On Leave)"></i>
-                              )}
-                            </td>
-                          );
-                        })}
-
+                        <td className="text-end py-3 px-4 text-secondary">
+                          ₹{(student.totalExtras || 0).toLocaleString()}
+                        </td>
+                        <td className="text-end py-3 px-4 text-danger fw-bold">
+                          ₹{(student.fineAmount || 0).toLocaleString()}
+                        </td>
                         <td className="text-end py-3 px-4 text-secondary fw-medium">
                           ₹{student.currentMonthBill.toLocaleString()}
                         </td>

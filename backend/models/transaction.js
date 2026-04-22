@@ -5,7 +5,7 @@ const transactionSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   type: { 
     type: String, 
-    enum: ['DailyMeals', 'Extra', 'Guest', 'Rebate', 'Payment'],
+    enum: ['DailyMeals', 'Extra', 'Guest', 'Rebate', 'Payment', 'Fine'],
     required: true 
   },
   description: { type: String, required: true }, // e.g., "Monthly Mess Fee", "Extra: Omelette", "Rebate for Leave"

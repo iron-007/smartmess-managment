@@ -1,6 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { getStudentMonthlyActivity, getStudentMessBill, requestMessStatusChange } = require('../controllers/studentController');
+const { 
+  getStudentMonthlyActivity, 
+  getStudentMessBill, 
+  requestMessStatusChange,
+  getStudentDues,
+  getStudentConsumptionMonthly,
+  submitMessRequest,
+  getStudentMessRequests,
+  getNextAvailableMeal
+} = require('../controllers/studentController');
 const { protect, isAdmin } = require('./authMiddleware');
 
 // @route   GET /api/students/:studentId/activity/:year/:month
@@ -17,5 +26,17 @@ router.get('/:studentId/bill', protect, isAdmin, getStudentMessBill);
 // @desc    Submit a request to open or close mess account
 // @access  Protected (Student)
 router.post('/:studentId/request-account-change', protect, requestMessStatusChange);
+
+// --- New Student Dashboard Routes ---
+
+// @route   GET /api/students/me/dues
+// @desc    Get current month dues and previous dues
+// @access  Protected (Student)
+router.get('/me/dues', protect, getStudentDues);
+
+// @route   GET /api/students/me/consumption/monthly
+// @desc    Get monthly consumption grid data
+// @access  Protected (Student)
+router.get('/me/consumption/monthly', protect, getStudentConsumptionMonthly);
 
 module.exports = router;

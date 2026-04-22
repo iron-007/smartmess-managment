@@ -135,7 +135,6 @@ const DynamicPricing = () => {
                   </table>
                 </div>
 
-                {/* RULES SECTION */}
                 <div className="row g-3 bg-light p-3 rounded-4 border border-light mt-2 align-items-center">
                   <div className="col-md-7">
                      <h6 className="fw-bold text-dark mb-1"><i className="bi bi-shield-lock text-muted me-2"></i>Minimum Rebate Notice</h6>
@@ -147,6 +146,51 @@ const DynamicPricing = () => {
                         value={pricing.rules?.noticeHours || ''} onChange={(e) => handleNestedChange('rules', 'noticeHours', e.target.value)} min="0" required />
                       <span className="input-group-text bg-light border-0 text-muted fw-semibold">Hours</span>
                     </div>
+                  </div>
+                </div>
+
+                {/* EXTRA ITEM PRICING SECTION */}
+                <div className="mt-5 mb-3">
+                  <h6 className="fw-bold text-dark text-uppercase small d-flex justify-content-between align-items-center">
+                    <span><i className="bi bi-plus-circle-fill text-primary me-2"></i>Extra Items Pricing</span>
+                    <button type="button" className="btn btn-sm btn-link text-primary p-0" onClick={() => {
+                      const itemName = prompt("Enter item name:");
+                      if (itemName) {
+                        const newExtras = pricing.extraPrices ? { ...pricing.extraPrices } : {};
+                        newExtras[itemName] = 0;
+                        setPricing({ ...pricing, extraPrices: newExtras });
+                      }
+                    }}>+ Add New Item</button>
+                  </h6>
+                  <div className="row g-3">
+                    {pricing.extraPrices && Object.entries(pricing.extraPrices).map(([item, price]) => (
+                      <div key={item} className="col-md-4">
+                        <div className="card border-0 bg-light p-3 rounded-4 h-100">
+                          <div className="d-flex justify-content-between align-items-center mb-2">
+                            <label className="small fw-bold text-muted mb-0">{item}</label>
+                            <button type="button" className="btn-close" style={{ fontSize: '0.6rem' }} onClick={() => {
+                              const newExtras = { ...pricing.extraPrices };
+                              delete newExtras[item];
+                              setPricing({ ...pricing, extraPrices: newExtras });
+                            }}></button>
+                          </div>
+                          <div className="input-group input-group-sm shadow-sm rounded-3 overflow-hidden border bg-white">
+                            <span className="input-group-text bg-white border-0 text-muted">₹</span>
+                            <input 
+                              type="number" 
+                              className="form-control border-0 bg-white" 
+                              value={price} 
+                              onChange={(e) => {
+                                const newExtras = { ...pricing.extraPrices };
+                                newExtras[item] = parseInt(e.target.value) || 0;
+                                setPricing({ ...pricing, extraPrices: newExtras });
+                              }}
+                              min="0"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 

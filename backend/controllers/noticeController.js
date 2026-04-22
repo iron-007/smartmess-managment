@@ -110,3 +110,21 @@ exports.updateNotice = async (req, res) => {
     res.status(500).json({ message: "Server error while updating notice." });
   }
 };
+
+// GET /api/notices (Student view)
+exports.getActiveNotices = async (req, res) => {
+  try {
+    const now = new Date();
+    // Fetch notices that are either not expired or have no expiration date
+    const notices = await Notice.find({
+      $or: [
+        { validUntil: { $gt: now } },
+        { validUntil: null }
+      ]
+    }).sort({ createdAt: -1 });
+    res.status(200).json({ notices });
+  } catch (error) {
+    console.error("Error fetching active notices:", error);
+    res.status(500).json({ message: "Server error while fetching notices." });
+  }
+};

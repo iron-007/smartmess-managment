@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 function ProtectedRoute({ children, allowedRoles }) {
   const token = localStorage.getItem("token");
@@ -10,10 +10,10 @@ function ProtectedRoute({ children, allowedRoles }) {
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     // Redirect based on role if unauthorized access is attempted
-    return <Navigate to={user.role === "admin" ? "/admin/menu" : "/"} replace />;
+    return <Navigate to={user.role === "admin" ? "/admin/menu" : "/student/dashboard"} replace />;
   }
 
-  return children;
+  return children ? children : <Outlet />;
 }
 
 export default ProtectedRoute;

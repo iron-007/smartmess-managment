@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const RefreshToken = require('../models/refreshToken');
 
 const router = express.Router();
 
@@ -68,13 +69,81 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid role' });
     }
 
-    // Generate JWT
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // Generate Tokens
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '15m' });
+    
+    // Generate Refresh Token
+    const refreshTokenValue = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const refreshToken = new RefreshToken({
+      token: refreshTokenValue,
+      user: user._id,
+      expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    });
+    await refreshToken.save();
 
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    res.json({ 
+      token, 
+      refreshToken: refreshTokenValue,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role } 
+    });
   } catch (error) {
     console.error('Login Error:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Refresh Token route
+router.post('/refresh-token', async (req, res) => {
+  const { refreshToken: requestToken } = req.body;
+
+  if (!requestToken) {
+    return res.status(403).json({ message: "Refresh Token is required!" });
+  }
+
+  try {
+    const refreshToken = await RefreshToken.findOne({ token: requestToken }).populate('user');
+
+    if (!refreshToken) {
+      return res.status(403).json({ message: "Refresh token is not in database!" });
+    }
+
+    if (refreshToken.expiryDate.getTime() < new Date().getTime()) {
+      await RefreshToken.findByIdAndDelete(refreshToken._id);
+      return res.status(403).json({ message: "Refresh token was expired. Please make a new signin request" });
+    }
+
+    const newAccessToken = jwt.sign({ id: refreshToken.user._id, role: refreshToken.user.role }, process.env.JWT_SECRET, {
+      expiresIn: '15m',
+    });
+
+    return res.status(200).json({
+      token: newAccessToken,
+      refreshToken: refreshToken.token,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+
+// Logout route (to clear refresh token)
+router.post('/logout', async (req, res) => {
+  const { refreshToken } = req.body;
+  if (refreshToken) {
+    await RefreshToken.findOneAndDelete({ token: refreshToken });
+  }
+  res.status(204).json({ message: "Logged out successfully" });
+});
+
+// Get current user profile
+const { protect } = require('./authMiddleware');
+router.get('/me', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server Error' });
   }
 });
 

@@ -39,4 +39,12 @@ const isAdmin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, isAdmin };
+const isButler = (req, res, next) => {
+  if (req.user && (req.user.role === 'butler' || req.user.role === 'admin')) {
+    next();
+  } else {
+    res.status(403).json({ message: 'Not authorized as a butler' });
+  }
+};
+
+module.exports = { protect, isAdmin, isButler };

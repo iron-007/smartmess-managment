@@ -19,7 +19,18 @@ const pricingSchema = new mongoose.Schema({
     date: { type: String },
     action: { type: String },
     admin: { type: String }
-  }]
+  }],
+  extraPrices: {
+    type: Map,
+    of: Number,
+    default: {
+      'Milk': 15,
+      'Egg': 10,
+      'Chicken': 120,
+      'Paneer': 100,
+      'Special Rice': 60
+    }
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Pricing', pricingSchema);

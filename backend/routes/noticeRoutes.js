@@ -20,8 +20,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-router.get('/', protect, isAdmin, noticeController.getNotices);
+router.get('/', protect, (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    return noticeController.getNotices(req, res, next);
+  } else {
+    return noticeController.getActiveNotices(req, res, next);
+  }
+});
 router.post('/', protect, isAdmin, upload.single('attachment'), noticeController.createNotice);
+router.put('/:id', protect, isAdmin, upload.single('attachment'), noticeController.updateNotice);
 router.delete('/:id', protect, isAdmin, noticeController.deleteNotice);
 
 module.exports = router;

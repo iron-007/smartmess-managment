@@ -6,18 +6,13 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { 
     type: String, 
-    enum: ['student', 'admin'], 
+    enum: ['student', 'admin', 'butler'], 
     default: 'student' 
   },
   messStatus: {
     type: String,
     enum: ['Open', 'Closed'],
     default: 'Open' // Mess account is open by default
-  },
-  messStatusRequest: {
-    type: String,
-    enum: ['None', 'Request_Open', 'Request_Close'],
-    default: 'None' // Tracks if a student asked to open or close their account
   },
   messStatusLog: [{
     action: { type: String }, // e.g., "Student Requested: Close Account", "Admin Approved"
@@ -32,7 +27,8 @@ const userSchema = new mongoose.Schema({
   crn: { type: String },
   department: { type: String },
   phone: { type: String },
-  previousDues: { type: Number, default: 0 } // Financial tracker
+  previousDues: { type: Number, default: 0 }, // Financial tracker
+  lastRequestDate: { type: Date, default: null } // Cooldown tracker
 }, { timestamps: true });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.models.User || mongoose.model('User', userSchema);

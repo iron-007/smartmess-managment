@@ -365,3 +365,46 @@
   background-color: var(--sidebar-dark);
   color: #ffffff;
 }
+
+/* --- CONSUMPTION GRID HOVER DETAILS --- */
+.cell-hover {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cell-hover:hover {
+  background-color: #f0f4ff;
+  z-index: 10;
+}
+
+.min-h-80 {
+  min-height: 80px;
+}
+
+.hover-details {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
+  display: none;
+  z-index: 1060;
+  pointer-events: none; /* Prevents flickering */
+  animation: fadeIn 0.2s ease-out;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.cell-hover:hover .hover-details {
+  display: block;
+}
+
+/* Adjust position if cell is at bottom of table */
+tr:nth-last-child(-n+2) .hover-details {
+  top: auto;
+  bottom: 100%;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
