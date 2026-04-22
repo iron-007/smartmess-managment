@@ -28,6 +28,14 @@ exports.processDailyBilling = async (req, res) => {
     const ledgerEntries = [];
 
     for (const student of students) {
+      // INSTANT EFFECT: Respect pending requests immediately for billing
+      const effectiveStatus = student.messStatusRequest === 'Request_Open' ? 'Open' : 
+                              (student.messStatusRequest === 'Request_Close' ? 'Closed' : student.messStatus);
+
+      if (effectiveStatus === 'Closed') {
+        continue;
+      }
+
       // 🛡️ THE NEW SAFETY LOCK: Did we already bill them today?
       const alreadyBilled = await Transaction.findOne({
         student: student._id,
@@ -363,3 +371,74 @@ exports.getAllStudents = async (req, res) => {
 //         res.status(500).json({ success: false, message: "Server error during backfill." });
 //     }
 // };
+
+// --- Account Approvals ---
+exports.getPendingApprovals = async (req, res) => {
+  try {
+    // Fetch students who have requested to open or close their mess account
+    const pendingUsers = await User.find({ messStatusRequest: { $ne: 'None' } }).select('-password').sort({ _id: -1 });
+    res.status(200).json({ success: true, users: pendingUsers });
+  } catch (error) {
+    console.error("Error fetching pending approvals:", error);
+    res.status(500).json({ success: false, message: "Server error fetching pending approvals" });
+  }
+};
+
+exports.approveAccount = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Apply the requested status
+    let actionLog = '';
+    if (user.messStatusRequest === 'Request_Open') {
+      user.messStatus = 'Open';
+      actionLog = 'Admin Approved: Account Opened';
+    } else if (user.messStatusRequest === 'Request_Close') {
+      user.messStatus = 'Closed';
+      actionLog = 'Admin Approved: Account Closed';
+    }
+    
+    user.messStatusLog.push({
+      action: actionLog,
+      remark: `Status officially changed to ${user.messStatus}`
+    });
+
+    user.messStatusRequest = 'None'; // Clear the request
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Account approved successfully", user });
+  } catch (error) {
+    console.error("Error approving account:", error);
+    res.status(500).json({ success: false, message: "Server error approving account" });
+  }
+};
+
+exports.rejectAccount = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Rejecting means we just clear the request without changing the actual status
+    user.messStatusLog.push({
+      action: `Admin Rejected: ${user.messStatusRequest === 'Request_Open' ? 'Open Request' : 'Close Request'}`,
+      remark: `Account remains ${user.messStatus}`
+    });
+
+    user.messStatusRequest = 'None';
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Account request rejected" });
+  } catch (error) {
+    console.error("Error rejecting account:", error);
+    res.status(500).json({ success: false, message: "Server error rejecting account" });
+  }
+};

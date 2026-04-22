@@ -163,3 +163,39 @@ exports.getStudentMessBill = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+// @desc    Request to open or close mess account
+// @route   POST /api/students/:studentId/request-account-change
+// @access  Student (requires authentication)
+exports.requestMessStatusChange = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const { requestType } = req.body; // Expects 'Request_Open' or 'Request_Close'
+
+    if (!['Request_Open', 'Request_Close'].includes(requestType)) {
+      return res.status(400).json({ message: 'Invalid request type. Must be Request_Open or Request_Close.' });
+    }
+
+    const student = await User.findById(studentId);
+    if (!student || student.role !== 'student') {
+      return res.status(404).json({ message: 'Student not found.' });
+    }
+
+    if ((requestType === 'Request_Open' && student.messStatus === 'Open') ||
+        (requestType === 'Request_Close' && student.messStatus === 'Closed')) {
+      return res.status(400).json({ message: `Your mess account is already ${student.messStatus}.` });
+    }
+
+    student.messStatusRequest = requestType;
+    student.messStatusLog.push({
+      action: `Student Requested: ${requestType === 'Request_Open' ? 'Open Account' : 'Close Account'}`,
+      remark: 'Pending Admin Approval'
+    });
+    await student.save();
+
+    res.status(200).json({ message: `Request to ${requestType === 'Request_Open' ? 'open' : 'close'} mess account submitted successfully.` });
+  } catch (error) {
+    console.error('Error submitting account request:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

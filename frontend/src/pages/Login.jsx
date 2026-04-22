@@ -11,7 +11,7 @@ function Login() {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [serverError, setServerError] = useState("");
+  const [serverMessage, setServerMessage] = useState({ type: "", text: "" });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,7 +29,7 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setServerError("");
+    setServerMessage({ type: "", text: "" });
     if (!validate()) return;
     setLoading(true);
 
@@ -47,20 +47,23 @@ function Login() {
         if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
-          
-          if (data.user.role === "admin") {
-            navigate("/admin/menu");
-          } else {
-            navigate("/student/dashboard"); // Ready for the student side!
-          }
+          setServerMessage({ type: "success", text: "Login successful! Redirecting..." });
+
+          setTimeout(() => {
+            if (data.user.role === "admin") {
+              navigate("/admin/menu");
+            } else {
+              navigate("/student/dashboard");
+            }
+          }, 1000);
         } else {
-          setServerError(data.message || "Invalid credentials");
+          setServerMessage({ type: "danger", text: data.message || "Invalid credentials" });
         }
       })
       .catch((err) => {
         setLoading(false);
         console.error(err);
-        setServerError('Login failed. Please try again later.');
+        setServerMessage({ type: "danger", text: 'Login failed. Please try again later.' });
       });
   };
 
@@ -90,9 +93,9 @@ function Login() {
                 <p className="text-muted small">Sign in to your account to continue</p>
               </div>
 
-              {serverError && (
-                <div className="alert alert-danger py-2 small" role="alert">
-                  {serverError}
+              {serverMessage.text && (
+                <div className={`alert alert-${serverMessage.type} py-2 small`} role="alert">
+                  {serverMessage.text}
                 </div>
               )}
 

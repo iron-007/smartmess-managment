@@ -9,6 +9,7 @@ import MenuManager from "./components/MenuManager";
 import DynamicPricing from "./components/DynamicPricing";
 import NoticeBoard from "./components/NoticeBoard";
 import StudentDirectory from "./components/StudentDirectory"; 
+import AccountApproval from "./components/AccountApproval";
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
             <Route index element={<Navigate to="menu" replace />} />
             <Route path="menu" element={<MenuManager />} />
             <Route path="pricing" element={<DynamicPricing />} />
-            <Route path="approvals" element={<h2 className="text-muted p-4">Account Approvals (Coming Soon)</h2>} />
+            <Route path="approvals" element={<AccountApproval />} />
             <Route path="notices" element={<NoticeBoard />} />
             <Route path="helpdesk" element={<h2 className="text-muted p-4">Admin Helpdesk (Coming Soon)</h2>} />
             <Route path="students" element={<StudentDirectory />} />
