@@ -133,6 +133,7 @@
 }
 
 .menu-table-header th {
+  background-color: var(--sidebar-dark) !important;
   color: #ffffff !important;
   font-weight: 600;
   letter-spacing: 0.5px;
