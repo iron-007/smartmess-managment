@@ -9,11 +9,11 @@ const DuesSection = ({ dues }) => {
   ];
 
   return (
-    <div className="card shadow-sm border-0 mb-4 h-100 overflow-hidden">
-      <div className="card-header bg-primary text-white p-3 border-0">
+    <div className="glass-panel shadow-md border-0 mb-4 h-100 overflow-hidden">
+      <div className="card-header text-white p-3 border-0" style={{ background: 'var(--brand-gradient)' }}>
         <h6 className="mb-0 fw-bold"><i className="bi bi-receipt me-2"></i>Current Month Bill Summary</h6>
       </div>
-      <div className="card-body p-4">
+      <div className="card-body p-4 bg-white">
         <div className="bill-items mb-4">
           {breakdown.map((item, index) => (
             <div key={index} className="d-flex justify-content-between align-items-center mb-2">
@@ -44,7 +44,7 @@ const DuesSection = ({ dues }) => {
             <h5 className="mb-0 fw-bold text-dark">Total Payable</h5>
             <small className="text-muted extra-small">Includes all charges & rebates</small>
           </div>
-          <h2 className="mb-0 fw-bold text-primary">₹{dues.totalPayable?.toLocaleString()}</h2>
+          <h2 className="mb-0 fw-bold" style={{ color: 'var(--brand-primary)' }}>₹{dues.totalPayable?.toLocaleString()}</h2>
         </div>
       </div>
     </div>

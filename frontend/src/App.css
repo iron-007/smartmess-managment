@@ -1,195 +1,4 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
-
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
-}
-
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
-}
-
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
-  width: 100%;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
-
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
-}
-/* --- ADMIN DASHBOARD UI UPGRADES --- */
-:root {
-  /* The Red-Orange Mix */
-  --brand-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-  --sidebar-dark: #16181d;
-  --sidebar-collapsed: 80px;
-  --sidebar-expanded: 260px;
-}
+/* --- APP LAYOUT STYLES --- */
 
 /* 1. The Fixed, Hover-Expand Sidebar */
 .admin-sidebar {
@@ -197,31 +6,32 @@
   top: 0;
   left: 0;
   height: 100vh;
-  width: var(--sidebar-collapsed);
+  width: 80px;
   background-color: var(--sidebar-dark);
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1050;
   overflow-x: hidden;
   white-space: nowrap;
-  box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+  box-shadow: 4px 0 20px rgba(0,0,0,0.1);
 }
 
 .admin-sidebar:hover {
-  width: var(--sidebar-expanded);
+  width: 260px;
 }
 
 /* 2. Sidebar Logo/Brand */
 .sidebar-brand {
   display: flex;
   align-items: center;
-  height: 70px;
+  height: 76px;
   padding: 0 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .sidebar-brand i {
   font-size: 1.8rem;
   min-width: 40px;
+  color: var(--brand-primary);
   background: var(--brand-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -232,111 +42,88 @@
   display: flex;
   align-items: center;
   padding: 12px 20px;
-  color: #8a8d93;
+  color: #94a3b8; /* Slate 400 */
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 10px;
   margin: 8px 12px;
   transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .sidebar-link i {
   font-size: 1.3rem;
-  min-width: 40px; /* Keeps icons perfectly aligned */
+  min-width: 40px; 
 }
 
 .admin-sidebar .link-text {
   opacity: 0;
   transition: opacity 0.2s ease;
-  white-space: nowrap; /* Prevents text from wrapping and peeking */
+  white-space: nowrap; 
 }
 
 .admin-sidebar:hover .link-text {
   opacity: 1;
 }
 
-/* Hover & Active State (The Orange/Red Pop) */
+/* Hover & Active State */
 .sidebar-link:hover, .sidebar-link.active {
   background: var(--brand-gradient);
   color: #ffffff;
-  box-shadow: 0 4px 15px rgba(255, 75, 43, 0.3);
+  box-shadow: var(--shadow-glow);
 }
 
 /* 4. Main Content Area Shift */
 .admin-main-wrapper {
-  margin-left: var(--sidebar-collapsed);
+  margin-left: 80px;
   min-height: 100vh;
-  background-color: #f8f9fc; /* Soft gray for high contrast */
+  background-color: var(--bg); 
   display: flex;
   flex-direction: column;
 }
 
 /* 5. The Elegant Navbar */
 .admin-top-nav {
-  height: 70px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
+  height: 76px;
+  background: #ffffff; /* Changed from glass-bg to solid white for full visibility */
   position: sticky;
   top: 0;
   z-index: 1000;
-  /* Adds a sleek, colorful gradient border to the top of the navbar */
-  border-top: 4px solid;
-  border-image: var(--brand-gradient) 1;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Make the Admin Dashboard title match the theme */
 .nav-title {
+  color: var(--brand-primary); /* Solid fallback for visibility */
   background: var(--brand-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
+
 /* --- Custom Logout Button Hover --- */
 .btn-logout {
-  color: #ff4b2b;
-  background-color: white;
-  border: 1px solid #ff4b2b;
+  color: var(--brand-primary);
+  background-color: rgba(255, 81, 47, 0.05); /* Orange-Red RGB */
+  border: 1px solid rgba(255, 81, 47, 0.2);
   transition: all 0.3s ease;
+  font-family: var(--font-heading);
 }
 
 .btn-logout:hover {
   background: var(--brand-gradient);
   color: white !important;
   border-color: transparent;
-  box-shadow: 0 4px 15px rgba(255, 75, 43, 0.3);
-}
-/* --- MENU MANAGER UI UPGRADES --- */
-.btn-gradient {
-  background: var(--brand-gradient);
-  color: white;
-  border: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow-glow);
 }
 
-.btn-gradient:hover {
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 75, 43, 0.4);
-}
-
-.modern-input {
-  background-color: #f8f9fc;
-  border: 1px solid #eef0f4;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.modern-input:focus {
-  background-color: #ffffff;
-  border-color: #ff4b2b;
-  box-shadow: 0 0 0 4px rgba(255, 75, 43, 0.1);
-  outline: none;
-}
 /* --- PREMIUM TABLE STYLING --- */
 .menu-table-wrapper {
   background-color: #ffffff;
-  border-radius: 12px;
-  overflow: hidden; /* Keeps the rounded corners clean */
-  border: 1px solid #eef0f4;
+  border-radius: 16px;
+  overflow: hidden; 
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
 }
 
 /* Match the Table Header to the Sidebar */
@@ -358,8 +145,9 @@
 }
 
 .menu-table-row:hover {
-  background-color: #fcfcfd; 
+  background-color: #fef4f2; /* Extremely light peach */
 }
+
 /* Custom utility for the dark theme */
 .bg-sidebar-dark {
   background-color: var(--sidebar-dark);
@@ -373,7 +161,7 @@
 }
 
 .cell-hover:hover {
-  background-color: #f0f4ff;
+  background-color: #fff1ee; /* Peach 50 */
   z-index: 10;
 }
 
@@ -389,9 +177,9 @@
   width: 250px;
   display: none;
   z-index: 1060;
-  pointer-events: none; /* Prevents flickering */
-  animation: fadeIn 0.2s ease-out;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+  pointer-events: none; 
+  animation: slideUp 0.2s ease-out;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 .cell-hover:hover .hover-details {
@@ -402,9 +190,4 @@
 tr:nth-last-child(-n+2) .hover-details {
   top: auto;
   bottom: 100%;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }

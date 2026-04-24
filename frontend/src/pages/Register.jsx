@@ -91,25 +91,25 @@ function Register() {
   };
 
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5" style={{ backgroundImage: 'radial-gradient(circle at 50% -20%, #ff416c 0%, #f8f9fc 40%)' }}>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5 fade-in" style={{ background: 'radial-gradient(circle at 50% -20%, rgba(255, 81, 47, 0.15) 0%, transparent 40%)' }}>
       
       {/* Even broader card to handle all the inputs cleanly */}
-      <div className="card shadow-lg border-0 rounded-4 overflow-hidden" style={{ maxWidth: "1000px", width: "100%" }}>
+      <div className="card shadow-lg border-0 rounded-4 overflow-hidden slide-up" style={{ maxWidth: "1000px", width: "100%", background: 'var(--bg)' }}>
         <div className="row g-0">
           
           {/* LEFT: Branding Panel */}
-          <div className="col-md-4 d-none d-md-flex flex-column justify-content-center align-items-center p-5 text-center" style={{ backgroundColor: '#16181d', color: 'white' }}>
+          <div className="col-md-4 d-none d-md-flex flex-column justify-content-center align-items-center p-5 text-center bg-sidebar-dark text-white">
             <div className="mb-4 bg-white rounded-circle d-flex justify-content-center align-items-center shadow-lg" style={{ width: '80px', height: '80px' }}>
-               <i className="bi bi-person-vcard fs-1" style={{ background: 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}></i>
+               <i className="bi bi-person-vcard fs-1 text-gradient"></i>
             </div>
-            <h3 className="fw-bold mb-3">Join SmartMess</h3>
+            <h3 className="fw-bold mb-3 text-white">Join SmartMess</h3>
             <p className="text-white-50 small mb-0 px-2">
               Register for your account to access menus, manage leaves, and view your real-time mess bill.
             </p>
           </div>
 
           {/* RIGHT: Registration Form */}
-          <div className="col-md-8 bg-white p-5">
+          <div className="col-md-8 p-5">
             <div className="mb-4 text-center text-md-start">
               <h3 className="fw-bold text-dark mb-1">Create an Account</h3>
               <p className="text-muted small">Fill in the details below to get started</p>
@@ -124,18 +124,18 @@ function Register() {
             <form onSubmit={handleSubmit}>
               
               {/* Role Toggle Switch */}
-              <div className="mb-4 p-2 bg-light rounded-pill d-flex flex-wrap gap-2 justify-content-center border" style={{ maxWidth: 'fit-content' }}>
+              <div className="mb-4 p-2 rounded-pill d-flex flex-wrap gap-2 justify-content-center border" style={{ maxWidth: 'fit-content', backgroundColor: '#f1f5f9' }}>
                 <div className="form-check form-check-inline m-0 ps-0">
                   <input type="radio" className="btn-check" name="role" id="roleStudent" value="student" checked={form.role === "student"} onChange={handleChange} />
-                  <label className="btn rounded-pill px-4 fw-bold" htmlFor="roleStudent" style={form.role === 'student' ? { background: '#16181d', color: 'white'} : { color: '#6c757d' }}>Student</label>
+                  <label className="btn rounded-pill px-4 fw-bold" htmlFor="roleStudent" style={form.role === 'student' ? { background: 'var(--sidebar-dark)', color: 'white'} : { color: '#64748b' }}>Student</label>
                 </div>
                 <div className="form-check form-check-inline m-0 ps-0">
                   <input type="radio" className="btn-check" name="role" id="roleAdmin" value="admin" checked={form.role === "admin"} onChange={handleChange} />
-                  <label className="btn rounded-pill px-4 fw-bold" htmlFor="roleAdmin" style={form.role === 'admin' ? { background: '#16181d', color: 'white'} : { color: '#6c757d' }}>Admin</label>
+                  <label className="btn rounded-pill px-4 fw-bold" htmlFor="roleAdmin" style={form.role === 'admin' ? { background: 'var(--sidebar-dark)', color: 'white'} : { color: '#64748b' }}>Admin</label>
                 </div>
                 <div className="form-check form-check-inline m-0 ps-0">
                   <input type="radio" className="btn-check" name="role" id="roleButler" value="butler" checked={form.role === "butler"} onChange={handleChange} />
-                  <label className="btn rounded-pill px-4 fw-bold" htmlFor="roleButler" style={form.role === 'butler' ? { background: '#16181d', color: 'white'} : { color: '#6c757d' }}>Mess Butler</label>
+                  <label className="btn rounded-pill px-4 fw-bold" htmlFor="roleButler" style={form.role === 'butler' ? { background: 'var(--sidebar-dark)', color: 'white'} : { color: '#64748b' }}>Mess Butler</label>
                 </div>
               </div>
               
@@ -253,7 +253,7 @@ function Register() {
             </form>
 
             <div className="text-center mt-3">
-              <small className="text-muted">Already have an account? <Link to="/login" className="fw-bold text-decoration-none" style={{ color: '#ff4b2b' }}>Sign in here</Link></small>
+              <small className="text-muted">Already have an account? <Link to="/login" className="fw-bold text-decoration-none" style={{ color: 'var(--brand-primary)' }}>Sign in here</Link></small>
             </div>
           </div>
         </div>

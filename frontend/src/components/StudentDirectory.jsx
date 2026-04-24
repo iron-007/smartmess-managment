@@ -186,8 +186,7 @@ const StudentDirectory = () => {
           <button 
             onClick={handleRunLedger} 
             disabled={isLedgerRunning || loading}
-            className="btn text-white fw-bold shadow-sm rounded-pill px-4 py-2"
-            style={{ background: 'linear-gradient(45deg, #FF512F 0%, #DD2476 100%)', border: 'none' }}
+            className="btn btn-gradient rounded-pill px-4 py-2"
           >
             {isLedgerRunning ? (
               <><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Auditing...</>

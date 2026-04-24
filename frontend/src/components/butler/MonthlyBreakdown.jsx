@@ -67,7 +67,7 @@ const MonthlyBreakdown = () => {
       <div className="card-body p-4 pt-2">
         <div className="d-flex justify-content-end gap-3 mb-3">
           <div className="small d-flex align-items-center">
-            <span className="badge rounded-circle p-1 me-2" style={{ backgroundColor: '#10b981', width: '8px', height: '8px', display: 'inline-block' }}></span>
+            <span className="badge rounded-circle p-1 me-2" style={{ backgroundColor: '#FF512F', width: '8px', height: '8px', display: 'inline-block' }}></span>
             Active
           </div>
           <div className="small d-flex align-items-center">
@@ -87,8 +87,8 @@ const MonthlyBreakdown = () => {
               <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorActive" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#FF512F" stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor="#FF512F" stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorInactive" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#ef4444" stopOpacity={0.15}/>
@@ -114,7 +114,7 @@ const MonthlyBreakdown = () => {
                 <Area 
                   type="natural" 
                   dataKey="active" 
-                  stroke="#10b981" 
+                  stroke="#FF512F" 
                   strokeWidth={4}
                   fillOpacity={1} 
                   fill="url(#colorActive)" 

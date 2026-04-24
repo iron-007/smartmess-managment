@@ -71,25 +71,25 @@ function Login() {
   };
 
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light" style={{ backgroundImage: 'radial-gradient(circle at 50% -20%, #ff416c 0%, #f8f9fc 40%)' }}>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light fade-in" style={{ background: 'radial-gradient(circle at 50% -20%, rgba(255, 81, 47, 0.15) 0%, transparent 40%)' }}>
       
       {/* Broader Horizontal Card */}
-      <div className="card shadow-lg border-0 rounded-4 overflow-hidden" style={{ maxWidth: '900px', width: '100%', minHeight: '550px' }}>
+      <div className="card shadow-lg border-0 rounded-4 overflow-hidden slide-up" style={{ maxWidth: '900px', width: '100%', minHeight: '550px', background: 'var(--bg)' }}>
         <div className="row g-0 h-100">
           
           {/* LEFT: Branding Panel */}
-          <div className="col-md-5 d-none d-md-flex flex-column justify-content-center align-items-center p-5 text-center" style={{ backgroundColor: '#16181d', color: 'white' }}>
+          <div className="col-md-5 d-none d-md-flex flex-column justify-content-center align-items-center p-5 text-center bg-sidebar-dark text-white">
             <div className="mb-4 bg-white rounded-circle d-flex justify-content-center align-items-center shadow-lg" style={{ width: '80px', height: '80px' }}>
-              <i className="bi bi-hexagon-fill fs-1" style={{ background: 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}></i>
+              <i className="bi bi-hexagon-fill fs-1 text-gradient"></i>
             </div>
-            <h2 className="fw-bold mb-3">SmartMess</h2>
+            <h2 className="fw-bold mb-3 text-white">SmartMess</h2>
             <p className="text-white-50 small mb-0 px-3">
               The intelligent, automated way to manage student dining, leaves, and financial ledgers.
             </p>
           </div>
 
           {/* RIGHT: Login Form */}
-          <div className="col-md-7 d-flex flex-column justify-content-center bg-white p-5">
+          <div className="col-md-7 d-flex flex-column justify-content-center p-5">
             <div className="w-100 px-lg-4">
               <div className="mb-4 text-center text-md-start">
                 <h3 className="fw-bold text-dark mb-1">Welcome Back</h3>
@@ -150,7 +150,7 @@ function Login() {
               </form>
 
               <div className="text-center mb-4">
-                <small className="text-muted">Don't have an account? <Link to="/register" className="fw-bold text-decoration-none" style={{ color: '#ff4b2b' }}>Register here</Link></small>
+                <small className="text-muted">Don't have an account? <Link to="/register" className="fw-bold text-decoration-none" style={{ color: 'var(--brand-primary)' }}>Register here</Link></small>
               </div>
             </div>
           </div>
