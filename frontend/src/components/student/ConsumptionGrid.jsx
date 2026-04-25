@@ -35,47 +35,54 @@ const ConsumptionGrid = ({ consumption }) => {
   }
 
   return (
-    <div className="card shadow-sm border-0 h-100">
-      <div className="card-body">
-        <h5 className="card-title fw-bold text-primary mb-4">Consumption History</h5>
-        <div className="table-responsive">
-          <table className="table table-bordered table-sm text-center">
+    <div className="glass-panel shadow-md border-0 h-100 fade-in">
+      <div className="card-header border-0 bg-transparent p-4 pb-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h5 className="mb-0 fw-bold text-dark"><i className="bi bi-grid-3x3-gap-fill me-2 text-info"></i>Consumption History</h5>
+        <div className="d-flex flex-wrap gap-3 mt-2 mt-sm-0">
+          <div className="small d-flex align-items-center"><span className="badge rounded-circle bg-success p-1 me-2 shadow-sm" style={{ width: '12px', height: '12px' }}></span> Open</div>
+          <div className="small d-flex align-items-center"><span className="badge rounded-circle bg-danger p-1 me-2 shadow-sm" style={{ width: '12px', height: '12px' }}></span> Closed</div>
+          <div className="small d-flex align-items-center"><span className="text-muted fw-bold extra-small me-1 bg-light px-1 rounded border">ND</span> No Data</div>
+        </div>
+      </div>
+      <div className="card-body p-4 pt-3">
+        <div className="table-responsive rounded-4 border shadow-sm bg-white">
+          <table className="table table-bordered table-sm text-center mb-0 border-0">
             <thead className="bg-light">
               <tr>
-                {daysOfWeek.map(day => <th key={day}>{day}</th>)}
+                {daysOfWeek.map((day, idx) => (
+                  <th key={day} className={`py-3 text-muted fw-bold small text-uppercase ${idx === 0 ? 'border-start-0' : ''} ${idx === 6 ? 'border-end-0' : ''}`}>
+                    {day}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {weeks.map((week, wIndex) => (
                 <tr key={wIndex}>
                   {week.map((day, dIndex) => {
-                    if (!day) return <td key={dIndex} className="bg-light"></td>;
+                    if (!day) return <td key={dIndex} className="bg-light bg-opacity-50"></td>;
                     
                     const dateObj = new Date(day.date);
                     const isToday = new Date().toDateString() === dateObj.toDateString();
                     
                     return (
-                      <td key={dIndex} className={`${isToday ? "border border-primary border-2" : ""} p-0 position-relative cell-hover`}>
-                        <div className="d-flex flex-column h-100 p-2 min-h-80">
-                          <span className={`small fw-bold ${isToday ? "text-primary" : ""}`}>{dateObj.getDate()}</span>
+                      <td key={dIndex} className={`p-0 position-relative cell-hover transition-all ${isToday ? "bg-primary bg-opacity-10 border border-primary border-2" : ""}`}>
+                        <div className="d-flex flex-column h-100 p-2 min-h-80 align-items-center justify-content-center">
+                          <span className={`small fw-bold ${isToday ? "text-primary fs-6" : "text-dark"}`}>{dateObj.getDate()}</span>
                           <div className="my-1">
                             {day.messStatus === 'ND' ? (
-                              <span className="small text-muted fw-bold" style={{ fontSize: '0.6rem' }}>ND</span>
+                              <span className="small text-muted fw-bold bg-light px-1 rounded border" style={{ fontSize: '0.6rem' }}>ND</span>
                             ) : (
                               <span 
-                                className={`rounded-circle d-inline-block`} 
-                                style={{ 
-                                  width: '10px', 
-                                  height: '10px', 
-                                  backgroundColor: day.messStatus === 'OPEN' ? '#28a745' : '#dc3545' 
-                                }}
+                                className={`rounded-circle d-inline-block shadow-sm ${day.messStatus === 'OPEN' ? 'bg-success' : 'bg-danger'}`} 
+                                style={{ width: '10px', height: '10px' }}
                                 title={`Mess Status: ${day.messStatus}`}
                               ></span>
                             )}
                           </div>
-                          <div style={{ fontSize: '0.65rem' }}>
-                            {day.guestMeals > 0 && <div className="text-info">G: {day.guestMeals}</div>}
-                            {day.extras.length > 0 && <div className="text-muted">E: {day.extras.length}</div>}
+                          <div style={{ fontSize: '0.65rem' }} className="d-flex flex-column align-items-center gap-1 mt-1">
+                            {day.guestMeals > 0 && <span className="badge bg-info text-white rounded-pill shadow-sm px-2">G: {day.guestMeals}</span>}
+                            {day.extras.length > 0 && <span className="badge bg-warning text-dark rounded-pill shadow-sm px-2">E: {day.extras.length}</span>}
                           </div>
                         </div>
 
@@ -135,11 +142,6 @@ const ConsumptionGrid = ({ consumption }) => {
               ))}
             </tbody>
           </table>
-        </div>
-        <div className="d-flex justify-content-center mt-3 gap-3">
-          <div className="small"><span className="badge rounded-pill bg-success p-1 me-1"> </span> Open</div>
-          <div className="small"><span className="badge rounded-pill bg-danger p-1 me-1"> </span> Closed</div>
-          <div className="small"><span className="text-muted fw-bold extra-small">ND</span> No Data</div>
         </div>
       </div>
     </div>

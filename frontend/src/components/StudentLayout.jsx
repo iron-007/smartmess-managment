@@ -15,64 +15,62 @@ const StudentLayout = () => {
   const isActive = (path) => location.pathname.includes(path) ? "active" : "";
 
   return (
-    <div className="bg-light min-vh-100">
-      
-      {/* --- THE SIDEBAR --- */}
-      <aside className="admin-sidebar">
-        {/* Brand/Logo */}
-        <div className="sidebar-brand mb-3">
-          <i className="bi bi-hexagon-fill"></i>
-          <span className="link-text fs-4 fw-bold text-white ms-2">SmartMess</span>
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="d-flex flex-column gap-1">
-          <Link to="/student/dashboard" className={`sidebar-link ${isActive('/student/dashboard')}`}>
-            <i className="bi bi-speedometer2"></i>
-            <span className="link-text">Dashboard</span>
-          </Link>
-          
-
-          <div className="sidebar-link text-muted opacity-50 cursor-not-allowed">
-            <i className="bi bi-gear"></i>
-            <span className="link-text">Settings</span>
-          </div>
-        </nav>
-      </aside>
-
-      {/* --- THE MAIN CONTENT AREA --- */}
-      <div className="admin-main-wrapper">
-        
-        {/* The Top Navbar */}
-        <header className="admin-top-nav d-flex justify-content-between align-items-center px-4">
-          <div className="d-flex flex-column">
-            <h4 className="m-0 fs-5 fw-bold nav-title">Student Portal</h4>
-            <small className="text-muted fw-medium mt-1">Welcome back, {user.name}</small>
-          </div>
-          
-          <div className="d-flex align-items-center gap-4">
-            <div className="d-flex align-items-center gap-2">
-              <div className="bg-light rounded-circle d-flex align-items-center justify-content-center border" style={{ width: '40px', height: '40px' }}>
-                 <i className="bi bi-mortarboard-fill text-secondary fs-5"></i>
-              </div>
-              <div className="d-flex flex-column">
-                <span className="fw-bold text-dark lh-1">{user.name}</span>
-                <span className="text-muted" style={{ fontSize: '0.8rem' }}>Student</span>
-              </div>
+    <div className="bg-light min-vh-100 d-flex flex-column">
+      {/* Combined Top Navbar */}
+      <nav className="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top px-3 py-2 fade-in" style={{ zIndex: 1050 }}>
+        <div className="container-fluid">
+          {/* Brand */}
+          <Link className="navbar-brand d-flex align-items-center gap-2" to="/student/dashboard">
+            <div className="rounded p-2 d-flex align-items-center justify-content-center shadow-sm" style={{ background: 'var(--brand-gradient)' }}>
+              <i className="bi bi-hexagon-fill text-white fs-5 lh-1"></i>
             </div>
-            
-            <button onClick={handleLogout} className="btn btn-logout rounded-pill px-4 fw-semibold">
-              Logout <i className="bi bi-box-arrow-right ms-1"></i>
-            </button>
+            <span className="fw-bold fs-4 nav-title mb-0">SmartMess</span>
+          </Link>
+
+          {/* Mobile Toggle */}
+          <button className="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#studentNavbar" aria-controls="studentNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+
+          {/* Navbar Links & User Actions */}
+          <div className="collapse navbar-collapse" id="studentNavbar">
+            {/* Center/Left Links */}
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-2 mt-3 mt-lg-0">
+              <li className="nav-item">
+                <Link to="/student/dashboard" className={`nav-link fw-bold px-4 py-2 rounded-pill transition-all ${isActive('/student/dashboard') ? 'bg-primary bg-opacity-10 text-primary' : 'text-secondary hover-bg-light'}`}>
+                  <i className="bi bi-speedometer2 me-2"></i>Dashboard
+                </Link>
+              </li>
+              <li className="nav-item">
+                <span className="nav-link fw-medium px-4 py-2 rounded-pill text-muted opacity-50 cursor-not-allowed">
+                  <i className="bi bi-gear me-2"></i>Settings
+                </span>
+              </li>
+            </ul>
+
+            {/* Right Side: User Profile & Logout */}
+            <div className="d-flex align-items-center gap-3 mt-3 mt-lg-0 border-lg-start ps-lg-4">
+              <div className="d-flex align-items-center gap-2 py-1 px-3 rounded-pill bg-light border border-light transition-all hover-lift shadow-sm">
+                <div className="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style={{ width: '32px', height: '32px' }}>
+                   <i className="bi bi-mortarboard-fill text-primary fs-6"></i>
+                </div>
+                <div className="d-flex flex-column d-none d-sm-flex">
+                  <span className="fw-bold text-dark lh-1 small">{user.name || 'Student'}</span>
+                </div>
+              </div>
+              
+              <button onClick={handleLogout} className="btn btn-logout rounded-pill px-4 py-2 fw-semibold shadow-sm d-flex align-items-center transition-all">
+                Logout <i className="bi bi-box-arrow-right ms-2 fs-6"></i>
+              </button>
+            </div>
           </div>
-        </header>
+        </div>
+      </nav>
 
-        {/* Dynamic Page Content Renders Here */}
-        <main className="p-4 flex-grow-1 overflow-auto w-100">
-          <Outlet />
-        </main>
-
-      </div>
+      {/* Main Content Area */}
+      <main className="flex-grow-1 w-100 fade-in" style={{ background: 'var(--bg)' }}>
+        <Outlet />
+      </main>
     </div>
   );
 };

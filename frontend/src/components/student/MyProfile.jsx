@@ -21,19 +21,19 @@ const MyProfile = ({ user }) => {
   ];
 
   return (
-    <div className="glass-panel shadow-md border-0 mb-4 overflow-hidden fade-in" style={{ borderRadius: '16px' }}>
+    <div className="glass-panel shadow-md border-0 mb-4 overflow-hidden fade-in h-100" style={{ borderRadius: '16px' }}>
       <div className="card-header border-0 p-4" style={{ background: 'var(--sidebar-dark)', color: 'white' }}>
         <div className="d-flex align-items-center">
-          <div className="bg-white bg-opacity-10 rounded-circle p-3 me-3 d-flex align-items-center justify-content-center border border-white border-opacity-10" style={{ width: '64px', height: '64px' }}>
-            <i className="bi bi-person-bounding-box fs-2 text-white"></i>
+          <div className="bg-white bg-opacity-10 rounded-circle p-3 me-3 d-flex align-items-center justify-content-center border border-white border-opacity-10 shadow-sm transition-all hover-lift" style={{ width: '72px', height: '72px' }}>
+            <i className="bi bi-person-bounding-box fs-1 text-white"></i>
           </div>
           <div>
-            <h4 className="mb-1 fw-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{user.name}</h4>
-            <div className="d-flex gap-2 align-items-center mt-1">
-              <span className="badge text-white small fw-semibold px-3 rounded-pill shadow-sm" style={{ background: 'var(--brand-gradient)' }}>
+            <h3 className="mb-1 fw-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{user.name}</h3>
+            <div className="d-flex flex-wrap gap-2 align-items-center mt-2">
+              <span className="badge text-white small fw-bold px-3 py-1 rounded-pill shadow-sm" style={{ background: 'var(--brand-gradient)' }}>
                 {user.role?.toUpperCase() || 'STUDENT'}
               </span>
-              <span className="text-white-50 small"><i className="bi bi-dot"></i> {user.email}</span>
+              <span className="text-white-50 small bg-white bg-opacity-10 px-2 py-1 rounded-pill"><i className="bi bi-envelope-fill me-1"></i> {user.email}</span>
             </div>
           </div>
         </div>
@@ -41,19 +41,19 @@ const MyProfile = ({ user }) => {
       
       <div className="card-body p-0 bg-white">
         <div className="p-3 px-4 bg-light border-bottom d-flex align-items-center justify-content-between">
-          <span className="text-muted small fw-bold text-uppercase ls-1">Profile Details</span>
-          <i className="bi bi-shield-check text-success fs-5"></i>
+          <span className="text-muted small fw-bold text-uppercase ls-1"><i className="bi bi-person-vcard me-2"></i>Profile Details</span>
+          <i className="bi bi-shield-fill-check text-success fs-5" title="Verified Identity"></i>
         </div>
         
         <div className="row g-0">
           {profileFields.map((field, index) => (
-            <div key={index} className="col-md-6 border-end border-bottom">
-              <div className="p-3 px-4 transition-all hover-bg-light">
-                <p className="text-muted small mb-1 d-flex align-items-center">
-                  <i className={`bi ${field.icon} me-2 opacity-75`} style={{ color: 'var(--brand-primary)' }}></i>
+            <div key={index} className={`col-md-6 ${index % 2 === 0 ? 'border-end' : ''} border-bottom border-light`}>
+              <div className="p-3 px-4 transition-all hover-bg-light" style={{ cursor: 'default' }}>
+                <p className="text-muted small mb-1 d-flex align-items-center fw-medium">
+                  <i className={`bi ${field.icon} me-2 fs-6 opacity-75`} style={{ color: 'var(--brand-primary)' }}></i>
                   {field.label}
                 </p>
-                <h6 className="mb-0 fw-bold text-dark" style={{ color: '#1f2937 !important' }}>
+                <h6 className="mb-0 fw-bold text-dark ps-4" style={{ color: '#1f2937 !important' }}>
                   {field.value}
                 </h6>
               </div>
@@ -61,8 +61,8 @@ const MyProfile = ({ user }) => {
           ))}
         </div>
 
-        <div className="p-3 text-center" style={{ backgroundColor: '#f8fafc' }}>
-           <small className="text-muted">
+        <div className="p-3 text-center bg-light">
+           <small className="text-muted fw-medium">
              <i className="bi bi-info-circle-fill me-1" style={{ color: 'var(--brand-secondary)' }}></i>
              Identity verified by SmartMess System
            </small>

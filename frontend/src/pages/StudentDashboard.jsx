@@ -73,22 +73,22 @@ const StudentDashboard = () => {
   );
 
   return (
-    <div className="fade-in">
-      <div className="row mb-4">
+    <div className="container-fluid py-4 fade-in">
+      <div className="row mb-4 align-items-center">
         <div className="col-12">
-          <h2 className="fw-bold text-dark">Dashboard</h2>
-          <p className="text-muted">Overview of your mess account and consumption.</p>
+          <h2 className="fw-bold text-dark mb-1"><i className="bi bi-speedometer2 me-2 text-primary"></i>Student Dashboard</h2>
+          <p className="text-muted mb-0">Overview of your mess account and consumption.</p>
         </div>
       </div>
 
       {/* Row 0: Profile */}
-      <div className="row mb-4">
+      <div className="row mb-4 slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
         <div className="col-12">
           <MyProfile user={data.user} />
         </div>
       </div>
 
-      <div className="row g-4">
+      <div className="row g-4 slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
         {/* Row 1: Dues and Today's Menu */}
         <div className="col-lg-6 col-xl-4">
           <DuesSection dues={data.dues} />
