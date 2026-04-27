@@ -262,21 +262,36 @@ const LandingPage = () => {
                             role: "Backend Developer",
                             intro: "Architecting robust and scalable server-side solutions. Obsessed with data integrity, API performance, and building the unbreakable logic that powers SmartMess from the ground up.",
                             img: "/anand_pic.jpeg",
-                            coverBg: "linear-gradient(135deg, #4A00E0 0%, #8E2DE2 100%)"
+                            coverBg: "linear-gradient(135deg, #4A00E0 0%, #8E2DE2 100%)",
+                            socials: {
+                                twitter: "https://x.com/anandraj",
+                                github: "https://github.com/anandraj",
+                                linkedin: "https://www.linkedin.com/in/anandraj/"
+                            }
                         },
                         {
                             name: "Aryan Pandey",
                             role: "Frontend / Backend Developer",
                             intro: "The ultimate full-stack problem solver. Blending pixel-perfect UI design with powerful backend algorithms to deliver a truly seamless, end-to-end mess management experience.",
                             img: "/aryan_pic.png",
-                            coverBg: "var(--brand-gradient)"
+                            coverBg: "var(--brand-gradient)",
+                            socials: {
+                                twitter: "https://x.com/aryan02006",
+                                github: "https://github.com/Aryan02006",
+                                linkedin: "https://www.linkedin.com/in/aryan-pandey084/"
+                            }
                         },
                         {
                             name: "Samar Shivam",
                             role: "Frontend Developer",
                             intro: "Breathing life into code with stunning visuals and buttery-smooth interactions. Dedicated to crafting an intuitive, modern, and engaging user interface that users love at first sight.",
                             img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                            coverBg: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"
+                            coverBg: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
+                            socials: {
+                                twitter: "https://x.com/samarshivam",
+                                github: "https://github.com/samarshivam",
+                                linkedin: "https://www.linkedin.com/in/samarshivam/"
+                            }
                         }
                     ].map((person, i) => (
                         <div key={i} className="col-md-4 slide-up" style={{ animationDelay: `${0.1 * (i + 1)}s` }}>
@@ -291,11 +306,19 @@ const LandingPage = () => {
                                         <span className="badge rounded-pill px-3 py-2 fw-bold shadow-sm" style={{ background: person.coverBg, color: 'white' }}>{person.role}</span>
                                     </div>
                                     <p className="text-muted small mb-4 flex-grow-1 px-2">{person.intro}</p>
-                                    <div className="social-links d-flex justify-content-center gap-3 mt-auto">
-                                        <a href="#" className="social-btn"><i className="bi bi-twitter-x"></i></a>
-                                        <a href="#" className="social-btn"><i className="bi bi-github"></i></a>
-                                        <a href="#" className="social-btn"><i className="bi bi-linkedin"></i></a>
-                                    </div>
+                                    {person.socials && (
+                                        <div className="social-links d-flex justify-content-center gap-3 mt-auto">
+                                            {person.socials.twitter && (
+                                                <a href={person.socials.twitter} target="_blank" rel="noopener noreferrer" className="social-btn"><i className="bi bi-twitter-x"></i></a>
+                                            )}
+                                            {person.socials.github && (
+                                                <a href={person.socials.github} target="_blank" rel="noopener noreferrer" className="social-btn"><i className="bi bi-github"></i></a>
+                                            )}
+                                            {person.socials.linkedin && (
+                                                <a href={person.socials.linkedin} target="_blank" rel="noopener noreferrer" className="social-btn"><i className="bi bi-linkedin"></i></a>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
