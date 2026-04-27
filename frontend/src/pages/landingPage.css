@@ -259,6 +259,27 @@
 }
 
 
+/* Team */
+.team-card {
+    border: 1px solid #eee;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.team-card:hover {
+    transform: translateY(-15px);
+    border-color: var(--brand-primary);
+    box-shadow: var(--shadow-lg);
+}
+
+.team-card:hover .team-img-wrapper {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(255, 81, 47, 0.3);
+}
+
+.team-img-wrapper {
+    transition: all 0.3s ease;
+}
+
 /* Responsive */
 @media (max-width: 992px) {
     .hero-title {

@@ -17,7 +17,8 @@ const LandingPage = () => {
                     <div className="nav-links d-none d-md-flex gap-4 align-items-center">
                         <a href="#features">Features</a>
                         <a href="#roles">Roles</a>
-                        <Link to="/login" className="btn btn-outline-light rounded-pill px-4">Login</Link>
+                        <a href="#about">About Us</a>
+                        <Link to="/login" className="btn btn-outline-dark rounded-pill px-4">Login</Link>
                         <Link to="/register" className="btn btn-gradient rounded-pill px-4">Get Started</Link>
                     </div>
                     <div className="d-md-none">
@@ -215,6 +216,52 @@ const LandingPage = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            {/* ABOUT US SECTION */}
+            <section id="about" className="about-section container py-5 my-5">
+                <div className="text-center mb-5 fade-in">
+                    <h6 className="text-primary fw-bold text-uppercase ls-wide">Our Team</h6>
+                    <h2 className="section-title fw-bold">Meet the Minds Behind SmartMess</h2>
+                </div>
+                <div className="row g-4 justify-content-center">
+                    {[
+                        {
+                            name: "Person 1",
+                            role: "Lead Developer",
+                            intro: "Passionate about building scalable backend systems and optimizing performance for better user experience.",
+                            img: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                        },
+                        {
+                            name: "Person 2",
+                            role: "UI/UX Designer",
+                            intro: "Dedicated to crafting intuitive interfaces and seamless interactions to make mess management effortless.",
+                            img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                        },
+                        {
+                            name: "Person 3",
+                            role: "Product Manager",
+                            intro: "Ensuring the product meets the highest standards and solves real-world operational challenges efficiently.",
+                            img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                        }
+                    ].map((person, i) => (
+                        <div key={i} className="col-md-4 slide-up" style={{ animationDelay: `${0.1 * (i + 1)}s` }}>
+                            <div className="team-card glass-card p-4 h-100 transition-all text-center">
+                                <div className="team-img-wrapper mb-4 mx-auto position-relative shadow-sm" style={{ width: '160px', height: '160px', borderRadius: '50%', padding: '5px', background: 'var(--brand-gradient)', zIndex: 1 }}>
+                                    <img src={person.img} alt={person.name} className="img-fluid" style={{ borderRadius: '50%', width: '100%', height: '100%', objectFit: 'cover', border: '5px solid white' }} />
+                                </div>
+                                <h4 className="fw-bold mb-1">{person.name}</h4>
+                                <h6 className="text-gradient mb-3 fw-bold">{person.role}</h6>
+                                <p className="text-muted mb-0 small">{person.intro}</p>
+                                <div className="social-links d-flex justify-content-center gap-3 mt-4">
+                                    <a href="#" className="text-muted btn btn-light rounded-circle shadow-sm" style={{width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><i className="bi bi-twitter-x"></i></a>
+                                    <a href="#" className="text-muted btn btn-light rounded-circle shadow-sm" style={{width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><i className="bi bi-github"></i></a>
+                                    <a href="#" className="text-muted btn btn-light rounded-circle shadow-sm" style={{width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><i className="bi bi-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </section>
 
