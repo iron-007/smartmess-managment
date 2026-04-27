@@ -13,6 +13,7 @@ import AccountApproval from "./components/AccountApproval";
 import ProtectedRoute from "./components/ProtectedRoute";
 import StudentLayout from "./components/StudentLayout";
 import StudentDashboard from "./pages/StudentDashboard";
+import LandingPage from "./pages/landingPage";
 
 // Butler Imports
 import ButlerProtectedRoute from "./components/ButlerProtectedRoute";
@@ -24,6 +25,11 @@ function App() {
   return (
     <>
       <Routes>
+        {/* Landing Page as the entry point */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
         {/* Redirect root URL to the login page */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
