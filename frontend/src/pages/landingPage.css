@@ -57,6 +57,13 @@
     display: inline-block;
 }
 
+.text-gradient-ro {
+    background: linear-gradient(135deg, #ff0000 0%, #ff8c00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
 .btn-gradient {
     background: var(--brand-gradient);
     border: none;

@@ -208,12 +208,13 @@ const LandingPage = () => {
                 <div className="container">
                     <div className="row align-items-center g-5">
                         <div className="col-lg-5">
+                            <h6 className="text-primary fw-bold text-uppercase ls-wide mb-2">Solutions</h6>
                             <h2 className="fw-bold mb-4">Tailored experience for every user</h2>
                             <p className="text-muted mb-5">
                                 We've built dedicated workflows to ensure every stakeholder has the tools they need at their fingertips.
                             </p>
                             <div className="role-selector">
-                                <div className="role-item active p-3 rounded-4 mb-3 d-flex align-items-center gap-3">
+                                <div className="role-item p-3 rounded-4 mb-3 d-flex align-items-center gap-3">
                                     <div className="icon-circle bg-primary"><i className="bi bi-person-badge"></i></div>
                                     <div>
                                         <h6 className="mb-0 fw-bold">For Administrators</h6>
