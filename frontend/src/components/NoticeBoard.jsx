@@ -3,7 +3,7 @@ import api from "../utils/api";
 
 const NoticeBoard = () => {
   const [notices, setNotices] = useState([]);
-  
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [priority, setPriority] = useState("Normal");
@@ -29,15 +29,35 @@ const NoticeBoard = () => {
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchNotices = async () => {
       try {
+        setLoading(true);
+        setError(null);
+
         const response = await api.get("/api/admin/notices");
-        setNotices(response.data.notices || []);
-      } catch (error) {
-        console.error("Failed to fetch notices:", error);
+
+        if (isMounted) {
+          setNotices(response?.data?.notices ?? []);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err);
+          console.error("Failed to fetch notices:", err);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
+
     fetchNotices();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const toggleExpand = (id) => {
@@ -71,18 +91,18 @@ const NoticeBoard = () => {
     if (!editingId) {
       formData.append("date", new Date().toISOString());
     }
-    
+
     if (attachment) {
       formData.append("attachment", attachment);
     }
     formData.append("validUntil", validUntil);
 
     try {
-      const url = editingId 
+      const url = editingId
         ? `/api/admin/notices/${editingId}`
         : "/api/admin/notices";
       const method = editingId ? "put" : "post";
-      
+
       const response = await api({
         method,
         url,
@@ -96,7 +116,7 @@ const NoticeBoard = () => {
       if (editingId) {
         setNotices(notices.map(n => n._id === editingId ? data.notice : n));
       } else {
-        setNotices([data.notice, ...notices]); 
+        setNotices([data.notice, ...notices]);
       }
       resetForm();
     } catch (error) {
@@ -134,7 +154,7 @@ const NoticeBoard = () => {
 
   return (
     <div className="container-fluid py-2">
-      
+
       {/* PAGE HEADER */}
       <div className="mb-4">
         <h2 className="nav-title fw-bold m-0">
@@ -142,44 +162,44 @@ const NoticeBoard = () => {
         </h2>
         <p className="text-muted small mt-1 mb-0">Broadcast announcements, rules, and updates to all students</p>
       </div>
-      
+
       <div className="row g-4">
-        
+
         {/* LEFT COLUMN: Form */}
         <div className="col-lg-5">
           <div className="card shadow-sm border-0 rounded-4 overflow-hidden sticky-top" style={{ top: '90px', zIndex: 1 }}>
-            
+
             {/* Dark Header */}
             <div className="bg-sidebar-dark p-3 px-4">
-               <h5 className="fw-bold m-0 text-white">
-                 <i className="bi bi-pencil-square text-white-50 me-2"></i>
-                 {editingId ? "Edit Notice" : "Compose Notice"}
-               </h5>
+              <h5 className="fw-bold m-0 text-white">
+                <i className="bi bi-pencil-square text-white-50 me-2"></i>
+                {editingId ? "Edit Notice" : "Compose Notice"}
+              </h5>
             </div>
 
             <div className="card-body p-4 bg-white">
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label className="form-label fw-bold text-secondary small">Notice Title</label>
-                  <input 
-                    type="text" 
-                    className="form-control modern-input" 
+                  <input
+                    type="text"
+                    className="form-control modern-input"
                     placeholder="E.g., Mess closed for maintenance..."
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    required 
+                    required
                   />
                 </div>
-                
+
                 <div className="mb-3">
                   <label className="form-label fw-bold text-secondary small">Message Content</label>
-                  <textarea 
-                    className="form-control modern-input" 
-                    rows="4" 
+                  <textarea
+                    className="form-control modern-input"
+                    rows="4"
                     placeholder="Type the full announcement here..."
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    required 
+                    required
                   ></textarea>
                 </div>
 
@@ -207,10 +227,10 @@ const NoticeBoard = () => {
                   <label className="form-label fw-bold text-dark small mb-1">
                     <i className="bi bi-paperclip me-1"></i> Add Attachment {editingId ? "(Leave blank to keep current)" : ""}
                   </label>
-                  <input 
-                    type="file" 
+                  <input
+                    type="file"
                     id="noticeAttachment"
-                    className="form-control form-control-sm modern-input bg-white" 
+                    className="form-control form-control-sm modern-input bg-white"
                     accept=".pdf,image/*"
                     onChange={(e) => setAttachment(e.target.files[0])}
                   />
@@ -234,24 +254,24 @@ const NoticeBoard = () => {
 
         {/* RIGHT COLUMN: Notice Feed */}
         <div className="col-lg-7">
-          
+
           {/* Feed Controls */}
           <div className="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-4 shadow-sm border border-light">
             <h5 className="fw-bold text-dark m-0 d-flex align-items-center">
               <i className={`bi ${activeTab === 'active' ? 'bi-broadcast text-success' : 'bi-archive text-secondary'} me-2`}></i>
               {activeTab === 'active' ? 'Live Announcements' : 'Notice Archive'}
             </h5>
-            
+
             <div className="bg-light p-1 rounded-pill border">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`btn btn-sm rounded-pill px-4 fw-semibold ${activeTab === 'active' ? 'btn-white shadow-sm text-dark bg-white' : 'btn-transparent text-muted border-0'}`}
                 onClick={() => setActiveTab('active')}
               >
                 Active
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`btn btn-sm rounded-pill px-4 fw-semibold ${activeTab === 'history' ? 'btn-white shadow-sm text-dark bg-white' : 'btn-transparent text-muted border-0'}`}
                 onClick={() => setActiveTab('history')}
               >
@@ -272,80 +292,81 @@ const NoticeBoard = () => {
               displayedNotices.map(notice => {
                 const isExpanded = expandedNotices[notice._id];
                 const isHighPriority = notice.priority === 'High';
-                
+
                 return (
-                <div key={notice._id} className={`card shadow-sm border-0 rounded-4 overflow-hidden ${activeTab === 'history' ? 'opacity-75 bg-light' : ''}`}>
-                  
-                  {/* Left-side color accent for High Priority */}
-                  <div className="d-flex h-100">
-                    <div className={`${isHighPriority ? 'bg-danger' : 'bg-primary'}`} style={{ width: '4px' }}></div>
-                    
-                    <div className="card-body p-4 w-100" onClick={() => toggleExpand(notice._id)} style={{ cursor: 'pointer' }}>
-                      
-                      {/* Notice Header */}
-                      <div className="d-flex justify-content-between align-items-start mb-2">
-                        <div className="d-flex align-items-center">
-                          {isHighPriority && <i className="bi bi-exclamation-circle-fill text-danger me-2"></i>}
-                          <h5 className="fw-bold text-dark m-0">
-                            {notice.title}
-                          </h5>
-                        </div>
-                        
-                        {/* Action Buttons */}
-                        <div className="d-flex gap-2" onClick={(e) => e.stopPropagation()}>
-                          {canEdit(notice.createdAt || notice.date) && (
-                            <button className="btn btn-sm btn-light text-primary border rounded-pill px-3 fw-medium hover-shadow" onClick={() => handleEdit(notice)}>
-                              <i className="bi bi-pencil-square me-1"></i> Edit
+                  <div key={notice._id} className={`card shadow-sm border-0 rounded-4 overflow-hidden ${activeTab === 'history' ? 'opacity-75 bg-light' : ''}`}>
+
+                    {/* Left-side color accent for High Priority */}
+                    <div className="d-flex h-100">
+                      <div className={`${isHighPriority ? 'bg-danger' : 'bg-primary'}`} style={{ width: '4px' }}></div>
+
+                      <div className="card-body p-4 w-100" onClick={() => toggleExpand(notice._id)} style={{ cursor: 'pointer' }}>
+
+                        {/* Notice Header */}
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <div className="d-flex align-items-center">
+                            {isHighPriority && <i className="bi bi-exclamation-circle-fill text-danger me-2"></i>}
+                            <h5 className="fw-bold text-dark m-0">
+                              {notice.title}
+                            </h5>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="d-flex gap-2" onClick={(e) => e.stopPropagation()}>
+                            {canEdit(notice.createdAt || notice.date) && (
+                              <button className="btn btn-sm btn-light text-primary border rounded-pill px-3 fw-medium hover-shadow" onClick={() => handleEdit(notice)}>
+                                <i className="bi bi-pencil-square me-1"></i> Edit
+                              </button>
+                            )}
+                            <button className="btn btn-sm btn-light text-danger border rounded-pill px-3 fw-medium hover-shadow" onClick={() => handleDelete(notice._id)}>
+                              <i className="bi bi-trash3 me-1"></i> Delete
                             </button>
-                          )}
-                          <button className="btn btn-sm btn-light text-danger border rounded-pill px-3 fw-medium hover-shadow" onClick={() => handleDelete(notice._id)}>
-                            <i className="bi bi-trash3 me-1"></i> Delete
-                          </button>
+                          </div>
                         </div>
+
+                        {/* Metadata row */}
+                        <div className="d-flex align-items-center mb-3 gap-3">
+                          <span className={`badge rounded-pill ${isHighPriority ? 'bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25' : 'bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25'}`}>
+                            {notice.priority} Priority
+                          </span>
+                          <small className="text-muted fw-medium">
+                            <i className="bi bi-clock me-1"></i> {new Date(notice.date).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          </small>
+                        </div>
+
+                        {/* Expandable Content */}
+                        {isExpanded ? (
+                          <div className="mt-3 pt-3 border-top border-light animate__animated animate__fadeIn">
+                            <p className="text-secondary mb-3" style={{ whiteSpace: 'pre-line' }}>{notice.content}</p>
+
+                            {notice.attachmentUrl && (
+                              <div className="mt-3" onClick={(e) => e.stopPropagation()}>
+                                <a href={`${api.defaults.baseURL}/${notice.attachmentUrl}`} target="_blank" rel="noopener noreferrer"
+                                  className="btn btn-light btn-sm border text-dark fw-medium rounded-pill shadow-sm px-4">
+                                  <i className="bi bi-file-earmark-text text-primary me-2"></i> View Attached Document
+                                </a>
+                              </div>
+                            )}
+
+                            {notice.validUntil && (
+                              <div className="mt-3 p-2 bg-warning bg-opacity-10 rounded-3 border border-warning border-opacity-25 d-inline-block">
+                                <small className="text-dark fw-medium">
+                                  <i className="bi bi-hourglass-split text-warning me-1"></i>
+                                  {activeTab === 'history' ? 'Expired on:' : 'Valid until:'} {new Date(notice.validUntil).toLocaleString()}
+                                </small>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="text-muted small mt-2">
+                            <i className="bi bi-arrows-expand me-1"></i> Click to read full notice
+                          </div>
+                        )}
                       </div>
-
-                      {/* Metadata row */}
-                      <div className="d-flex align-items-center mb-3 gap-3">
-                        <span className={`badge rounded-pill ${isHighPriority ? 'bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25' : 'bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25'}`}>
-                          {notice.priority} Priority
-                        </span>
-                        <small className="text-muted fw-medium">
-                          <i className="bi bi-clock me-1"></i> {new Date(notice.date).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        </small>
-                      </div>
-
-                      {/* Expandable Content */}
-                      {isExpanded ? (
-                        <div className="mt-3 pt-3 border-top border-light animate__animated animate__fadeIn">
-                          <p className="text-secondary mb-3" style={{ whiteSpace: 'pre-line' }}>{notice.content}</p>
-                          
-                          {notice.attachmentUrl && (
-                            <div className="mt-3" onClick={(e) => e.stopPropagation()}>
-                              <a href={`${api.defaults.baseURL}/${notice.attachmentUrl}`} target="_blank" rel="noopener noreferrer" 
-                                 className="btn btn-light btn-sm border text-dark fw-medium rounded-pill shadow-sm px-4">
-                                <i className="bi bi-file-earmark-text text-primary me-2"></i> View Attached Document
-                              </a>
-                            </div>
-                          )}
-
-                          {notice.validUntil && (
-                            <div className="mt-3 p-2 bg-warning bg-opacity-10 rounded-3 border border-warning border-opacity-25 d-inline-block">
-                              <small className="text-dark fw-medium">
-                                <i className="bi bi-hourglass-split text-warning me-1"></i> 
-                                {activeTab === 'history' ? 'Expired on:' : 'Valid until:'} {new Date(notice.validUntil).toLocaleString()}
-                              </small>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="text-muted small mt-2">
-                          <i className="bi bi-arrows-expand me-1"></i> Click to read full notice
-                        </div>
-                      )}
                     </div>
                   </div>
-                </div>
-              )})
+                )
+              })
             )}
           </div>
         </div>

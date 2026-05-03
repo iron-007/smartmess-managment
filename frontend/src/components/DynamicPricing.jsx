@@ -22,19 +22,23 @@ const DynamicPricing = () => {
       try {
         const response = await api.get("/api/admin/pricing");
         const data = response.data;
+
         if (data.pricing) {
-          setPricing({
-            ...pricing, // Preserve defaults for new fields like extraPrices if missing
+          setPricing(prev => ({
+            ...prev,
             ...data.pricing
-          });
+          }));
         }
-        if (data.auditLog) setAuditLog(data.auditLog);
+
+        if (data.auditLog) {
+          setAuditLog(data.auditLog);
+        }
       } catch (error) {
         console.error("Failed to fetch pricing data:", error);
       }
     };
+
     fetchPricing();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleNestedChange = (category, field, value) => {
