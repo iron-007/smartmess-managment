@@ -333,7 +333,7 @@ const LandingPage = () => {
             </section>
 
             {/* FAQ SECTION */}
-            <section id="faq" className="faq-section container py-5 my-5">
+            <section id="faq" className="faq-section container py-3 mt-5 mb-0">
                 <div className="text-center mb-5 fade-in">
                     <h6 className="text-primary fw-bold text-uppercase ls-wide">Questions?</h6>
                     <h2 className="section-title fw-bold">Frequently Asked <span className="text-gradient">Questions</span></h2>
@@ -350,8 +350,8 @@ const LandingPage = () => {
                                     a: "Instead of a flat monthly fee, our system calculates costs based on real-time consumption and attendance. If you cancel a meal in advance, you aren't charged for it, saving students money and drastically reducing food waste."
                                 },
                                 {
-                                    q: "Can students cancel meals at the last minute?",
-                                    a: "Students can easily manage meal requests through their personalized dashboard. To ensure accurate food preparation quantities, administrators can enforce a customizable notice period (e.g., 2 hours before mealtime)."
+                                    q: "How does the system handle guest meals and extra items?",
+                                    a: "SmartMess seamlessly tracks guest meals and extra food items. Butlers can instantly log these additions via their interface, and the exact charges are immediately updated in the student's transparent ledger."
                                 },
                                 {
                                     q: "How secure is the billing and ledger data?",
@@ -360,29 +360,34 @@ const LandingPage = () => {
                                 {
                                     q: "Do I need special hardware to mark attendance?",
                                     a: "No! Our system works flawlessly on any modern smartphone, tablet, or PC. Butlers can instantly verify students using their ID or via a quick search on the dedicated staff interface."
+                                },
+                                {
+                                    q: "How are students informed about menu changes or announcements?",
+                                    a: "Admins can use the Smart Notices feature to instantly broadcast daily menus, special event meals, or important announcements. This ensures everyone is updated in real-time through their personalized dashboard."
                                 }
                             ].map((faq, index) => (
-                                <div key={index} className="glass-card rounded-4 overflow-hidden slide-up" style={{ animationDelay: `${0.1 * (index + 1)}s` }}>
-                                    <button 
+                                <div key={index} className="glass-card rounded-4 overflow-hidden slide-up transition-all" style={{ animationDelay: `${0.1 * (index + 1)}s` }}>
+                                    <button
                                         className="w-100 text-start bg-transparent border-0 p-4 d-flex justify-content-between align-items-center fw-bold text-dark"
                                         onClick={() => toggleFaq(index)}
+                                        style={{ outline: 'none', cursor: 'pointer' }}
                                     >
-                                        <span className="fs-5">{faq.q}</span>
-                                        <div className="icon-circle shadow-sm" style={{ width: '32px', height: '32px', background: activeFaq === index ? 'var(--brand-gradient)' : '#f8f9fa', color: activeFaq === index ? 'white' : 'var(--text-muted)' }}>
-                                            <i className={`bi bi-chevron-${activeFaq === index ? 'up' : 'down'}`}></i>
+                                        <span className="fs-5 pe-4">{faq.q}</span>
+                                        <div className="icon-circle shadow-sm flex-shrink-0 transition-all" style={{ width: '36px', height: '36px', background: activeFaq === index ? 'var(--brand-gradient)' : 'rgba(255,255,255,0.8)', color: activeFaq === index ? 'white' : 'var(--text-muted)' }}>
+                                            <i className="bi bi-chevron-down" style={{ transform: activeFaq === index ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}></i>
                                         </div>
                                     </button>
-                                    <div 
-                                        className="px-4" 
-                                        style={{ 
-                                            maxHeight: activeFaq === index ? '200px' : '0', 
-                                            opacity: activeFaq === index ? 1 : 0, 
-                                            overflow: 'hidden', 
-                                            transition: 'all 0.3s ease-in-out',
+                                    <div
+                                        className="px-4"
+                                        style={{
+                                            maxHeight: activeFaq === index ? '200px' : '0',
+                                            opacity: activeFaq === index ? 1 : 0,
+                                            overflow: 'hidden',
+                                            transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                                             paddingBottom: activeFaq === index ? '1.5rem' : '0'
                                         }}
                                     >
-                                        <p className="text-muted mb-0">{faq.a}</p>
+                                        <p className="text-muted mb-0 lh-lg pe-lg-5">{faq.a}</p>
                                     </div>
                                 </div>
                             ))}
@@ -392,7 +397,7 @@ const LandingPage = () => {
             </section>
 
             {/* CTA SECTION */}
-            <section className="cta-section container py-5 my-5 text-center slide-up">
+            <section className="cta-section container py-5 mt-3 mb-5 text-center slide-up">
                 <div className="glass-panel p-5 rounded-5 overflow-hidden position-relative">
                     <div className="cta-bg-glow"></div>
                     <h2 className="fw-bold mb-3 display-5">Ready to revolutionize your mess?</h2>
