@@ -1,0 +1,58 @@
+<div class="login-wrapper">
+  <div class="login-glass-card">
+    <!-- Left Branding Side -->
+    <div class="branding-side">
+      <div class="brand-content">
+        <div class="logo-container">
+          <img [src]="logoUrl" alt="SmartMess Logo" class="brand-logo" *ngIf="logoUrl !== '/assets/Smartmess.png'">
+          <div class="logo-placeholder" *ngIf="logoUrl === '/assets/Smartmess.png' || !logoUrl">
+            <span class="hexagon-icon">⬡</span>
+          </div>
+        </div>
+        <h1 class="brand-title">SmartMess</h1>
+        <p class="brand-subtitle">The intelligent, automated way to manage student dining, leaves, and financial ledgers.</p>
+      </div>
+    </div>
+
+    <!-- Right Form Side -->
+    <div class="form-side">
+      <div class="form-header">
+        <h2>Welcome Back</h2>
+        <p>Sign in to your account to continue</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="modern-form">
+        <mat-form-field appearance="outline" class="custom-field">
+          <mat-label>Username</mat-label>
+          <input matInput type="text" placeholder="Enter your username" formControlName="username" required>
+          <mat-icon matPrefix>person_outline</mat-icon>
+          <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+            Username is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="custom-field">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" placeholder="Enter your password" formControlName="password" required>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+            Minimum 3 characters long
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-raised-button class="submit-btn" type="submit" [disabled]="loginForm.invalid">
+            Sign In
+          </button>
+        </div>
+      </form>
+      
+      <div class="form-footer">
+        <p>Protected by LDAP Secure Authentication</p>
+      </div>
+    </div>
+  </div>
+</div>
