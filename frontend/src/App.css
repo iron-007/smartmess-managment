@@ -196,29 +196,48 @@ tr:nth-last-child(-n+2) .hover-details {
 /* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 768px) {
   .admin-sidebar {
-    width: 60px;
+    transform: translateX(-100%);
+    width: 260px;
+    z-index: 1060;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  .admin-sidebar:hover {
-    width: 220px;
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar .link-text {
+    opacity: 1; /* Always show text on mobile */
   }
   
   .admin-main-wrapper {
-    margin-left: 60px;
+    margin-left: 0; /* Content takes full width */
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1055;
+    backdrop-filter: blur(2px);
+    transition: opacity 0.3s ease;
   }
   
   .sidebar-brand {
-    padding: 0 10px;
+    padding: 0 20px;
   }
   
   .sidebar-brand i {
-    min-width: 30px;
-    margin-left: 4px;
+    min-width: 40px;
+    margin-left: 0;
   }
   
   .sidebar-link {
-    margin: 8px 6px;
-    padding: 10px 14px;
+    margin: 8px 12px;
+    padding: 12px 20px;
   }
   
   .admin-top-nav {
@@ -228,10 +247,6 @@ tr:nth-last-child(-n+2) .hover-details {
   
   .nav-title {
     font-size: 1.1rem !important;
-  }
-  
-  .admin-top-nav small.text-muted {
-    display: none !important;
   }
   
   .btn-logout {

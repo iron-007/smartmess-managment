@@ -93,10 +93,10 @@ const DynamicPricing = () => {
       .hover-border-brand:hover { border-color: var(--brand-primary) !important; }
       .brand-icon-bg { background: var(--brand-gradient); color: white; }
     `}</style>
-      <div className="container-fluid py-4 px-lg-4 slide-up" style={{ minHeight: "100vh" }}>
+      <div className="container-fluid py-4 px-2 px-md-4 slide-up" style={{ minHeight: "100vh" }}>
 
         {/* PAGE HEADER */}
-        <div className="mb-5 d-flex align-items-center justify-content-between fade-in">
+        <div className="mb-5 d-flex align-items-center justify-content-between fade-in px-2 px-md-0">
           <div>
             <h2 className="nav-title m-0 d-flex align-items-center" style={{ letterSpacing: "-0.5px" }}>
               <span className="brand-icon-bg p-2 rounded-3 me-3 shadow-sm d-inline-flex align-items-center justify-content-center" style={{ width: '48px', height: '48px', WebkitTextFillColor: 'white' }}>
@@ -115,16 +115,17 @@ const DynamicPricing = () => {
 
             {/* PRICING FORM CARD */}
             <div className="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden bg-white">
-              <div className="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+              <div className="card-header bg-white border-bottom-0 pt-4 pb-0 px-3 px-md-4">
                 <h5 className="nav-title m-0 d-flex align-items-center text-gradient">
                   <i className="bi bi-sliders me-2" style={{ color: 'var(--brand-primary)' }}></i> Base Meal Pricing
                 </h5>
                 <p className="text-muted small mt-1 mb-0">Set the default rates applied to daily mess billing.</p>
               </div>
 
-              <div className="card-body p-4">
+              <div className="card-body px-2 px-md-4 py-4">
                 <form onSubmit={handleSubmit}>
-                  <div className="table-responsive rounded-4 border mb-4 shadow-sm">
+                  {/* DESKTOP VIEW */}
+                  <div className="table-responsive rounded-4 border mb-4 shadow-sm d-none d-md-block">
                     <table className="table table-borderless align-middle mb-0 table-hover">
                       <thead className="bg-light border-bottom">
                         <tr>
@@ -170,13 +171,49 @@ const DynamicPricing = () => {
                     </table>
                   </div>
 
-
+                  {/* MOBILE VIEW */}
+                  <div className="d-md-none mb-4 d-flex flex-column gap-3">
+                    {['breakfast', 'lunch', 'dinner', 'special'].map((meal) => (
+                      <div key={meal} className="border rounded-4 p-3 shadow-sm bg-white">
+                        <div className="d-flex align-items-center mb-3 pb-2 border-bottom">
+                          <div className="me-2">{getMealIcon(meal)}</div>
+                          <span className="text-dark fw-bold text-capitalize fs-6">{meal}</span>
+                        </div>
+                        <div className="row g-3">
+                          <div className="col-6">
+                            <label className="small text-muted mb-1 fw-bold">Student Rate</label>
+                            <div className="input-group input-group-sm">
+                              <span className="input-group-text bg-light border-end-0">₹</span>
+                              <input
+                                type="number"
+                                className="form-control border-start-0 fw-bold"
+                                value={pricing.student[meal]}
+                                onChange={(e) => handleNestedChange('student', meal, parseInt(e.target.value) || 0)}
+                              />
+                            </div>
+                          </div>
+                          <div className="col-6">
+                            <label className="small text-muted mb-1 fw-bold">Guest Rate</label>
+                            <div className="input-group input-group-sm">
+                              <span className="input-group-text bg-light border-end-0">₹</span>
+                              <input
+                                type="number"
+                                className="form-control border-start-0 fw-bold"
+                                value={pricing.guest[meal]}
+                                onChange={(e) => handleNestedChange('guest', meal, parseInt(e.target.value) || 0)}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                   {/* EXTRA ITEM PRICING SECTION */}
                   <div className="mb-4">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                       <div>
                         <h6 className="nav-title m-0 d-flex align-items-center">
-                          <i className="bi bi-cup-hot-fill text-warning me-2"></i> À La Carte / Extra Items
+                          <i className="bi bi-cup-hot-fill text-warning me-2"></i> Extra Items
                         </h6>
                         <p className="text-muted small mt-1 mb-0">Configure prices for individual add-ons.</p>
                       </div>
@@ -253,11 +290,11 @@ const DynamicPricing = () => {
           <div className="col-lg-4 d-flex flex-column gap-4 fade-in" style={{ animationDelay: '0.2s' }}>
 
             {/* HOW IT WORKS */}
-            <div className="glass-panel position-relative overflow-hidden transition-all hover-shadow" style={{ background: "linear-gradient(135deg, rgba(255, 81, 47, 0.05) 0%, rgba(221, 36, 118, 0.05) 100%)", border: "1px solid rgba(255, 81, 47, 0.2)" }}>
-              <div className="position-absolute top-0 end-0 opacity-10 p-3" style={{ transform: "translate(10%, -10%)" }}>
-                <i className="bi bi-info-circle-fill" style={{ fontSize: "120px", color: "var(--brand-secondary)" }}></i>
+            <div className="glass-panel position-relative overflow-hidden transition-all hover-shadow mb-4 rounded-4" style={{ background: "linear-gradient(135deg, rgba(255, 81, 47, 0.05) 0%, rgba(221, 36, 118, 0.05) 100%)", border: "1px solid rgba(255, 81, 47, 0.2)" }}>
+              <div className="position-absolute top-0 end-0" style={{ transform: "translate(15%, -15%)", opacity: 0.06 }}>
+                <i className="bi bi-info-circle-fill" style={{ fontSize: "140px", color: "var(--brand-secondary)" }}></i>
               </div>
-              <div className="card-body p-4 position-relative z-index-1">
+              <div className="card-body p-3 p-md-4 position-relative z-1">
                 <div className="d-flex align-items-center mb-4">
                   <div className="brand-icon-bg rounded-circle shadow-sm d-flex justify-content-center align-items-center me-3" style={{ width: '45px', height: '45px' }}>
                     <i className="bi bi-lightbulb-fill fs-5"></i>
@@ -265,18 +302,18 @@ const DynamicPricing = () => {
                   <h5 className="nav-title m-0 text-gradient">How It Works</h5>
                 </div>
 
-                <p className="text-muted mb-4 small fw-medium">The values configured here strictly dictate the automated billing ledger.</p>
+                <p className="text-muted mb-4 small fw-medium pe-md-4">The values configured here strictly dictate the automated billing ledger.</p>
 
                 <ul className="list-unstyled text-secondary small d-flex flex-column gap-3 mb-0">
-                  <li className="d-flex align-items-start bg-white p-3 rounded-4 shadow-sm border border-light">
+                  <li className="d-flex align-items-start bg-white p-3 rounded-4 shadow-sm border border-light transition-all hover-shadow">
                     <i className="bi bi-check-circle-fill text-success mt-1 me-3 fs-5"></i>
                     <span>Students are billed precisely on the <strong className="text-dark">Per-Meal Costs</strong> for consumed meals.</span>
                   </li>
-                  <li className="d-flex align-items-start bg-white p-3 rounded-4 shadow-sm border border-light">
+                  <li className="d-flex align-items-start bg-white p-3 rounded-4 shadow-sm border border-light transition-all hover-shadow">
                     <i className="bi bi-pause-circle-fill text-warning mt-1 me-3 fs-5"></i>
                     <span>A <strong className="text-dark">{pricing.rules?.noticeHours || 24} hours</strong> notice is required to cancel a meal successfully.</span>
                   </li>
-                  <li className="d-flex align-items-start bg-white p-3 rounded-4 shadow-sm border border-light">
+                  <li className="d-flex align-items-start bg-white p-3 rounded-4 shadow-sm border border-light transition-all hover-shadow">
                     <i className="bi bi-shield-lock-fill mt-1 me-3 fs-5" style={{ color: 'var(--brand-primary)' }}></i>
                     <span><strong className="text-dark">Immutable Ledger:</strong> Updates only affect future days. Past generated bills cannot be altered.</span>
                   </li>
