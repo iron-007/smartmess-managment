@@ -1,6 +1,8 @@
 const Notice = require('../models/Notice');
 const fs = require('fs');
 const path = require('path');
+const cloudinary = require('../config/cloudinary');
+
 
 // Define constants for magic numbers
 const EDIT_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
@@ -24,19 +26,39 @@ exports.createNotice = async (req, res) => {
     let attachmentUrl = null;
 
     if (req.file) {
-      // Store path relative to the project structure, without a leading slash
-      attachmentUrl = `uploads/notices/${req.file.filename}`;
-    }
+      // Upload to Cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'smartmess/notices',
+        resource_type: 'auto'
+      });
+      attachmentUrl = result.secure_url;
+      const attachmentPublicId = result.public_id;
 
-    const newNotice = new Notice({ title, content, priority, date, attachmentUrl, validUntil: validUntil || null });
-    await newNotice.save();
-    
-    res.status(201).json({ notice: newNotice });
+      // Clean up local file
+      fs.unlinkSync(req.file.path);
+
+      const newNotice = new Notice({ 
+        title, 
+        content, 
+        priority, 
+        date, 
+        attachmentUrl, 
+        attachmentPublicId,
+        validUntil: validUntil || null 
+      });
+      await newNotice.save();
+      res.status(201).json({ notice: newNotice });
+    } else {
+      const newNotice = new Notice({ title, content, priority, date, validUntil: validUntil || null });
+      await newNotice.save();
+      res.status(201).json({ notice: newNotice });
+    }
   } catch (error) {
     console.error("Error creating notice:", error);
     res.status(500).json({ message: "Server error while creating notice." });
   }
 };
+
 
 // DELETE /api/admin/notices/:id
 exports.deleteNotice = async (req, res) => {
@@ -44,21 +66,22 @@ exports.deleteNotice = async (req, res) => {
     const notice = await Notice.findByIdAndDelete(req.params.id);
     if (!notice) return res.status(404).json({ message: "Notice not found." });
 
-    // Clean up the attached file from the server
-    if (notice.attachmentUrl) {
-      // Assuming 'uploads' directory is a sibling of 'controllers'
+    // Clean up the attached file
+    if (notice.attachmentPublicId) {
+      // Delete from Cloudinary
+      await cloudinary.uploader.destroy(notice.attachmentPublicId);
+    } else if (notice.attachmentUrl) {
+      // Legacy local file cleanup
       const filePath = path.join(__dirname, '..', notice.attachmentUrl); 
       try {
-        // Use async unlink and check for existence beforehand to avoid errors
         if (fs.existsSync(filePath)) {
           await fs.promises.unlink(filePath);
         }
       } catch (fileError) {
-        // If the DB entry is deleted but the file isn't, we should log it
-        // but not fail the whole operation, as the primary resource is gone.
-        console.warn(`Failed to delete attachment file: ${filePath}`, fileError);
+        console.warn(`Failed to delete local attachment file: ${filePath}`, fileError);
       }
     }
+
 
     res.status(200).json({ message: "Notice deleted successfully." });
   } catch (error) {
@@ -89,19 +112,33 @@ exports.updateNotice = async (req, res) => {
     }
 
     if (req.file) {
-      if (notice.attachmentUrl) {
+      // Delete old attachment if exists
+      if (notice.attachmentPublicId) {
+        await cloudinary.uploader.destroy(notice.attachmentPublicId);
+      } else if (notice.attachmentUrl) {
+        // Old local file cleanup
         const oldFilePath = path.join(__dirname, '..', notice.attachmentUrl); 
-        try {
-          if (fs.existsSync(oldFilePath)) {
+        if (fs.existsSync(oldFilePath)) {
+          try {
             await fs.promises.unlink(oldFilePath);
+          } catch (e) {
+            console.warn("Failed to delete old local file", e);
           }
-        } catch (fileError) {
-          console.warn(`Failed to delete old attachment file: ${oldFilePath}`, fileError);
         }
       }
-      // Store path relative to the project structure, without a leading slash
-      notice.attachmentUrl = `uploads/notices/${req.file.filename}`;
+
+      // Upload new one to Cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'smartmess/notices',
+        resource_type: 'auto'
+      });
+      notice.attachmentUrl = result.secure_url;
+      notice.attachmentPublicId = result.public_id;
+
+      // Clean up local file
+      fs.unlinkSync(req.file.path);
     }
+
 
     await notice.save();
     res.status(200).json({ notice });

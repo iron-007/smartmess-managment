@@ -341,7 +341,8 @@ const NoticeBoard = () => {
 
                             {notice.attachmentUrl && (
                               <div className="mt-3" onClick={(e) => e.stopPropagation()}>
-                                <a href={`${api.defaults.baseURL}/${notice.attachmentUrl}`} target="_blank" rel="noopener noreferrer"
+                                <a href={notice.attachmentUrl.startsWith('http') ? notice.attachmentUrl : `${api.defaults.baseURL}/${notice.attachmentUrl}`} target="_blank" rel="noopener noreferrer"
+
                                   className="btn btn-light btn-sm border text-dark fw-medium rounded-pill shadow-sm px-4">
                                   <i className="bi bi-file-earmark-text text-primary me-2"></i> View Attached Document
                                 </a>
