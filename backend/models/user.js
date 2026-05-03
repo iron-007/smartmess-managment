@@ -34,7 +34,9 @@ const userSchema = new mongoose.Schema({
     enum: ['None', 'Request_Open', 'Request_Close'],
     default: 'None'
   },
-  messRequestDate: { type: Date, default: null }
+  messRequestDate: { type: Date, default: null },
+  lastSettlementDate: { type: Date, default: null }
 }, { timestamps: true });
+
 
 module.exports = mongoose.models.User || mongoose.model('User', userSchema);

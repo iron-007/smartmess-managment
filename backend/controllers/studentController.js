@@ -243,7 +243,13 @@ exports.getStudentDues = async (req, res) => {
     let rebateTotal = 0;
     let currentMonthTotal = 0;
 
+    const student = await User.findById(studentId);
+    const lastSettlement = student.lastSettlementDate || startOfMonth;
+
     transactions.forEach(t => {
+      // ONLY count transactions that happened AFTER the last settlement
+      if (t.date <= lastSettlement) return;
+
       const amount = Math.abs(t.amount || 0);
 
       // Categorize for breakdown
@@ -255,8 +261,8 @@ exports.getStudentDues = async (req, res) => {
       if (t.type === 'Rebate') rebateTotal += amount;
     });
 
-    const student = await User.findById(studentId);
     const previousDues = student.previousDues || 0;
+
     
     // currentMonthBill: Total of all charges incurred this month (Gross)
     const currentMonthBill = dailyMealsTotal + extraTotal + guestTotal + fineTotal;

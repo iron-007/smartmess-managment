@@ -92,36 +92,64 @@ exports.processDailyBilling = async (req, res) => {
   }
 };
 
-// --- Monthly Late Fine (5% if > 2500) ---
+// --- Month-End Settlement (Last day at 11:30 PM) ---
+exports.processMonthEndSettlement = async () => {
+  try {
+    console.log('--- [SYSTEM] Triggering Automated Month-End Settlement (IST) ---');
+    const now = moment().tz("Asia/Kolkata");
+    const students = await User.find({ role: 'student' });
+    
+    let totalSettled = 0;
+
+    for (const student of students) {
+      const lastSettlement = student.lastSettlementDate || moment().tz("Asia/Kolkata").startOf('month').toDate();
+      
+      // Fetch all charges since last settlement
+      const transactions = await Transaction.find({
+        student: student._id,
+        date: { $gt: lastSettlement },
+        type: { $in: ['DailyMeals', 'Extra', 'Guest'] }
+      });
+
+      // Fetch all payments/rebates since last settlement
+      const credits = await Transaction.find({
+        student: student._id,
+        date: { $gt: lastSettlement },
+        type: { $in: ['Payment', 'Rebate'] }
+      });
+
+      const chargesTotal = transactions.reduce((acc, t) => acc + t.amount, 0);
+      const creditsTotal = credits.reduce((acc, t) => acc + t.amount, 0);
+      const netMonthlyBill = chargesTotal - creditsTotal;
+
+      if (netMonthlyBill !== 0) {
+        student.previousDues = (student.previousDues || 0) + netMonthlyBill;
+        student.lastSettlementDate = now.toDate();
+        await student.save();
+        totalSettled++;
+      } else {
+        // Even if bill is 0, update settlement date to "reset" the month
+        student.lastSettlementDate = now.toDate();
+        await student.save();
+      }
+    }
+    console.log(`--- [SYSTEM] Settlement Complete: Updated ${totalSettled} students ---`);
+  } catch (err) {
+    console.error('--- [SYSTEM] Month-End Settlement Failed:', err);
+  }
+};
+
+// --- Monthly Late Fine (5% if > 2500, Runs on 1st at 12:00 AM) ---
 exports.processMonthlyFine = async () => {
   try {
     const now = moment().tz("Asia/Kolkata");
-    const startOfMonth = now.clone().startOf('month').toDate();
-    const endOfMonth = now.clone().endOf('month').toDate();
-
     const students = await User.find({ role: 'student' });
     const fineEntries = [];
 
     for (const student of students) {
-      // Check if fine already applied this month
-      const alreadyFined = await Transaction.findOne({
-        student: student._id,
-        date: { $gte: startOfMonth, $lte: endOfMonth },
-        type: 'Fine'
-      });
-
-      if (alreadyFined) continue;
-
-      // Calculate current month's bill
-      const transactions = await Transaction.find({
-        student: student._id,
-        date: { $gte: startOfMonth, $lte: endOfMonth },
-        type: { $in: ['DailyMeals', 'Extra', 'Guest'] }
-      });
-
-      const currentMonthTotal = transactions.reduce((acc, t) => acc + t.amount, 0);
-      const previousDues = student.previousDues || 0;
-      const totalPayable = currentMonthTotal + previousDues;
+      // Net payable is now essentially student.previousDues (since we just settled)
+      // plus any transactions that happened in the last 30 mins (unlikely but possible)
+      const totalPayable = (student.previousDues || 0);
 
       if (totalPayable > 2500) {
         const fineAmount = Math.round(totalPayable * 0.05);
@@ -129,7 +157,7 @@ exports.processMonthlyFine = async () => {
           student: student._id,
           date: now.toDate(),
           type: 'Fine',
-          description: `5% Late Fine for bill > ₹2500 (${now.format('MMMM YYYY')})`,
+          description: `5% Late Fine for outstanding balance > ₹2500`,
           amount: fineAmount,
           mealType: 'N/A'
         });
@@ -144,6 +172,7 @@ exports.processMonthlyFine = async () => {
     console.error('[SYSTEM] Monthly Fine Process Failed:', err);
   }
 };
+
 
 // --- Admin Helper: Process Batch Ledger for missing days ---
 exports.backfillMissingDays = async (req, res) => {
@@ -285,11 +314,12 @@ exports.getAllStudents = async (req, res) => {
       ],
     });
 
-    // QUERY 3: Fetch ALL transactions for these students in ONE go using $in
+    // QUERY 3: Fetch ALL transactions for these students (from start of month or last settlement)
     const allTransactions = await Transaction.find({
       student: { $in: studentIds },
-      date: { $gte: startOfMonth, $lte: endOfMonth },
+      date: { $gte: moment(startOfMonth).subtract(1, 'month').toDate() }, // Look back a bit to be safe
     });
+
 
     // --- Organize data in server memory (Extremely Fast) ---
     const leavesByStudent = {};
@@ -337,6 +367,11 @@ exports.getAllStudents = async (req, res) => {
       let paymentsAndRebates = 0;
 
       monthlyTransactions.forEach((trans) => {
+        // ONLY count transactions that happened AFTER the last settlement
+        if (student.lastSettlementDate && trans.date <= student.lastSettlementDate) return;
+        // If no settlement date yet, fall back to start of month
+        if (!student.lastSettlementDate && trans.date < startOfMonth) return;
+
         const amount = trans.amount || 0;
         if (trans.type === 'DailyMeals') dailyMealsTotal += amount;
         if (trans.type === 'Extra') totalExtras += amount;
@@ -347,6 +382,7 @@ exports.getAllStudents = async (req, res) => {
           paymentsAndRebates += amount;
         }
       });
+
 
       // currentMonthBill is the total of all charges minus payments/rebates for this month
       const currentMonthBill = (dailyMealsTotal + totalExtras + totalGuestAmount + fineAmount) - paymentsAndRebates;

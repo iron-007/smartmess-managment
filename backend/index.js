@@ -5,6 +5,7 @@ dotenv.config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const https = require('https');
 const connectDB = require('./config/db');
 const adminRoutes = require('./routes/adminRoutes');
 const noticeRoutes = require('./routes/noticeRoutes');
@@ -42,6 +43,12 @@ app.get('/', (req, res) => {
   res.send('SmartMess API is running...');
 });
 
+// Ping route for self-pinging
+app.get('/api/ping', (req, res) => {
+  res.status(200).json({ message: 'Server is awake' });
+});
+
+
 // --- AUTOMATION: The Midnight Ledger ---
 cron.schedule('59 23 * * *', async () => {
   console.log('--- [SYSTEM] Triggering Automated Midnight Ledger (IST) ---');
@@ -55,19 +62,45 @@ cron.schedule('59 23 * * *', async () => {
   timezone: "Asia/Kolkata" // 🔒 Locks the trigger exactly to Indian Standard Time
 });
 
-// --- AUTOMATION: Monthly Late Fine (5% on 30th/31st if Dues > 2500) ---
-// Runs at 11:50 PM on the 30th and 31st of every month
-cron.schedule('50 23 30,31 * *', async () => {
-  console.log('--- [SYSTEM] Triggering Automated Monthly Late Fine Check (IST) ---');
-  try {
-    await adminController.processMonthlyFine(); 
-  } catch (err) {
-    console.error('--- [SYSTEM] Monthly Fine Automation Failed:', err);
+// --- AUTOMATION: Monthly Settlement (Last day at 11:30 PM IST) ---
+cron.schedule('30 23 * * *', async () => {
+  const now = moment().tz("Asia/Kolkata");
+  const isLastDay = now.date() === now.daysInMonth();
+  
+  if (isLastDay) {
+    await adminController.processMonthEndSettlement();
   }
 }, {
   scheduled: true,
   timezone: "Asia/Kolkata"
 });
+
+// --- AUTOMATION: Monthly Fine (1st day at 12:00 AM IST) ---
+cron.schedule('0 0 1 * *', async () => {
+  console.log('--- [SYSTEM] Triggering Automated Monthly Late Fine Check (IST) ---');
+  await adminController.processMonthlyFine(); 
+}, {
+  scheduled: true,
+  timezone: "Asia/Kolkata"
+});
+
+
+// --- AUTOMATION: Self-Ping (Every 14 mins to keep server awake) ---
+cron.schedule('*/14 * * * *', () => {
+  const backendUrl = process.env.BACKEND_URL;
+  if (!backendUrl || backendUrl.includes('your-app-name')) {
+    console.log('--- [SYSTEM] Self-ping skipped: BACKEND_URL not configured properly in .env ---');
+    return;
+  }
+
+  console.log(`--- [SYSTEM] Performing Self-Ping to ${backendUrl}/api/ping ---`);
+  https.get(`${backendUrl}/api/ping`, (res) => {
+    console.log(`--- [SYSTEM] Self-ping response: ${res.statusCode} ---`);
+  }).on('error', (err) => {
+    console.error('--- [SYSTEM] Self-ping failed:', err.message);
+  });
+});
+
 
 const PORT = process.env.PORT || 5000;
 
